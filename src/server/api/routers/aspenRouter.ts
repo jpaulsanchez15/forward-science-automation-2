@@ -28,16 +28,54 @@ export const aspenRouter = createTRPCRouter({
         officeName: z.string(),
         ordoroLink: z.string(),
         trackingNumber: z.string(),
+        products: z.object({
+          theraStom: z.number().optional(),
+          oxiStom: z.number().optional(),
+          salivaMax: z.number().optional(),
+          oralID: z.number().optional(),
+          accessories: z.object({
+            fs88: z.number().optional(),
+            fs84: z.number().optional(),
+          }),
+        }),
+        price: z.number(),
       })
     )
     .mutation(({ ctx, input }) => {
       // TODO: Change the input here for this.
       return ctx.prisma.aspenOrder.create({
+        // TODO: Fix this.
         data: {
           orderNumber: input.orderNumber,
           officeName: input.officeName,
-          ordoroLink: input.ordoroLink,
-          trackingNumber: input.trackingNumber,
+          ordoroLink: "",
+          trackingNumber: "",
+          price: input.price,
+          lines: {
+            create: [
+              {
+                productName: "TheraStom",
+                sku: "TS-16-12",
+                quantity: input.products.theraStom || 0,
+              },
+              {
+                productName: "OxiStom",
+                quantity: input.products.oxiStom,
+              },
+              {
+                productName: "SalivaMax",
+                quantity: input.products.salivaMax,
+              },
+              {
+                productName: "OralID",
+                quantity: input.products.oralID,
+              },
+              {
+                productName: "accessories",
+                quantity: input.products.accessories.fs88,
+              },
+            ],
+          },
         },
       });
     }),

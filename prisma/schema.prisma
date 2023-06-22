@@ -62,14 +62,14 @@ model VerificationToken {
 }
 
 model Line {
-    id             String       @id @default(cuid())
+    id             String        @id @default(cuid())
     quantity       Int
     sku            String
     productName    String
     price          BigInt
-    shopifyOrder   ShopifyOrder @relation(fields: [shopifyOrderId], references: [id])
-    shopifyOrderId String
-    aspenOrder     AspenOrder?  @relation(fields: [aspenOrderId], references: [id])
+    shopifyOrder   ShopifyOrder? @relation(fields: [shopifyOrderId], references: [id])
+    shopifyOrderId String?
+    aspenOrder     AspenOrder?   @relation(fields: [aspenOrderId], references: [id])
     aspenOrderId   String?
 }
 
