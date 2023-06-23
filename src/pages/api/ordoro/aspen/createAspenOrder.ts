@@ -1,37 +1,48 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { env } from "../../../../env.mjs";
-import { api } from "@/utils/api";
+import type { NextApiResponse } from "next";
+import { env } from "@/env.mjs";
 
 import type { SugarOffice } from "@/types/sugar/index";
+import type { OrdoroOrder } from "@/types/ordoro";
+import type { NextApiRequestWithBody } from "@/types/ordoro";
+import { prisma } from "@/server/db";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
+
+interface NewBody extends NextApiRequestWithBody {
+  body: {
+    orderNumber: string;
+    id: string;
+  };
+}
 
 const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
-// TODO: See why this is fucked.
+
 const formattedDate =
-  year + (month < 10 ? "0" : "") + month + (day < 10 ? "0" : "") + day;
+  year.toString() +
+  (month < 10 ? "0" : "") +
+  month.toString() +
+  (day < 10 ? "0" : "") +
+  day.toString();
 
-interface NextApiRequestWithBody extends NextApiRequest {
-  body: {
-    orderNumber: string;
-  };
-}
-
-const createAspenOrder = async (
-  req: NextApiRequestWithBody,
-  res: NextApiResponse
-) => {
+const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
+    console.log(req.body);
     // Actually creates the order for the label to then be made in Ordoro.
-    const order = api.aspenOrder.getOrder.useQuery({
-      orderNumber: req.body.orderNumber,
+    const order = await prisma.aspenOrder.findUnique({
+      where: {
+        orderNumber: req.body.orderNumber ?? "",
+        // id: req.body.id ?? "",
+      },
+      include: {
+        lines: true,
+      },
     });
 
     if (!order) {
@@ -40,9 +51,11 @@ const createAspenOrder = async (
     }
 
     const getOfficeAddress = async () => {
-      const officeOrderName = order.data?.officeName;
+      const officeOrderName = order.officeName;
       const sugarOfficeId = await fetch(
-        `https://forward-science-automation.vercel.app/api/sugar/aspen/findAspenOffice?officeName=${officeOrderName}`,
+        `https://forward-science-automation.vercel.app/api/sugar/aspen/findAspenOffice?officeName=${
+          officeOrderName ?? ""
+        }`,
         {
           method: "GET",
           headers: {
@@ -52,6 +65,7 @@ const createAspenOrder = async (
       );
 
       const data = (await sugarOfficeId.json()) as SugarOffice[];
+      console.log("sugaroffice", data[0]?.id);
 
       const {
         name,
@@ -107,7 +121,7 @@ const createAspenOrder = async (
       accessories: 0,
     };
 
-    const products = order.data?.lines.map((line) => {
+    const products = order.lines.map((line) => {
       return {
         [line.productName]: line.quantity,
       };
@@ -126,11 +140,13 @@ const createAspenOrder = async (
       .filter((product) => +product?.quantity > 0);
 
     const payload = JSON.stringify({
-      order_id: `${formattedDate}-${order.data?.orderNumber ?? ""}`,
+      order_id: `${formattedDate}-${order.orderNumber ?? ""}`,
       billing_address: billingAddress,
       shipping_address: shippingAddress,
       lines: productArray,
     });
+
+    console.log("payload", payload);
 
     const response = await fetch(`https://api.ordoro.com/v3/order`, {
       method: "POST",
@@ -143,17 +159,18 @@ const createAspenOrder = async (
       body: payload,
     });
 
-    // TODO: Type Ordoro order
-    const ordoroData = (await response.json()) as unknown;
+    console.log("ordororesponse", response);
 
-    const { mutateAsync } = api.aspenOrder.updateOrder.useMutation();
+    const ordoroData = (await response.json()) as OrdoroOrder;
 
-    // TODO: Fix typing on this.
-    const updatedOrder = await mutateAsync({
-      id: order.data?.id ?? 0,
-      orderNumber: req.body.orderNumber,
-      ordoroLink: ordoroData?.order_id,
-    }).catch((error) => console.error(error));
+    const updatedOrder = await prisma.aspenOrder.update({
+      where: {
+        orderNumber: req.body.orderNumber,
+      },
+      data: {
+        ordoroLink: `${ordoroData.order_number ?? ""}`,
+      },
+    });
 
     res.status(201).json({ order: updatedOrder, message: "Order added to DB" });
 

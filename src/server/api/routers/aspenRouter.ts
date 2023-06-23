@@ -61,37 +61,37 @@ export const aspenRouter = createTRPCRouter({
                 productName: "TheraStom",
                 sku: "TS-16-12",
                 quantity: input.products.theraStom || 0,
-                price: input.products.theraStom ?? 0 * 63,
+                price: (input.products.theraStom?.valueOf() ?? 0) * 63,
               },
               {
                 productName: "OxiStom",
                 sku: "OX-13-6",
                 quantity: input.products.oxiStom || 0,
-                price: input.products.oxiStom ?? 0 * 63,
+                price: (input.products.oxiStom?.valueOf() ?? 0) * 25.5,
               },
               {
                 productName: "SalivaMax",
                 sku: "SM",
                 quantity: input.products.salivaMax || 0,
-                price: input.products.salivaMax ?? 0 * 63,
+                price: (input.products.salivaMax?.valueOf() ?? 0) * 120,
               },
               {
                 productName: "OralID",
                 sku: "FS-11",
                 quantity: input.products.oralID || 0,
-                price: input.products.oralID ?? 0 * 63,
+                price: (input.products.oralID?.valueOf() ?? 0) * 1200,
               },
               {
                 productName: "FS88",
                 sku: "FS-88",
                 quantity: input.products.accessories.fs88 || 0,
-                price: input.products.accessories.fs88 ?? 0 * 63,
+                price: (input.products.accessories.fs88 ?? 0) * 20,
               },
               {
                 productName: "FS84",
                 sku: "FS-84",
                 quantity: input.products.accessories.fs84 || 0,
-                price: input.products.accessories.fs84 ?? 0 * 63,
+                price: (input.products.accessories.fs84 ?? 0) * 20,
               },
             ],
           },
@@ -101,13 +101,13 @@ export const aspenRouter = createTRPCRouter({
   deleteOrder: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        orderNumber: z.string(),
       })
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.aspenOrder.delete({
         where: {
-          id: input.id,
+          orderNumber: input.orderNumber,
         },
       });
     }),

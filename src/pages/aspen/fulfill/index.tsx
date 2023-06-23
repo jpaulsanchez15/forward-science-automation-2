@@ -9,96 +9,83 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { OrdoroOrder } from "@/types/ordoro";
+
+import type { AspenOutput } from "@/utils/api";
 
 type CardProps = {
   orderNumber: string;
   orderContents: string;
   orderPrice: string;
+  officeName: string;
   madeBy: string;
-  handler?: () => void;
+  handler?: () => void | Promise<void> | Promise<unknown>;
 };
+{
+  /* <Card key={order.id}>
+  <CardHeader>
+    <CardTitle>{orderNumber}</CardTitle>
+    <CardDescription>{madeBy}</CardDescription>
+    <CardDescription>For: {officeName}</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <ul className="flex flex-col">{orderContents}</ul>
+    <p>{orderPrice}</p>
+  </CardContent>
+</Card>; */
+}
 
-const OrderCard = ({
-  orderNumber,
-  orderContents,
-  orderPrice,
-  madeBy,
-  handler,
-}: CardProps) => {
+const FulfillPage = () => {
+  const { data, isLoading, refetch } = api.aspenOrder.getOrders.useQuery();
+  console.log("data", data);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{orderNumber}</CardTitle>
-        <CardDescription>{madeBy}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ul className="flex flex-col">{orderContents}</ul>
-        <p>{orderPrice}</p>
-      </CardContent>
-      <CardContent>
-        <Button onClick={handler}>Create Order</Button>
-      </CardContent>
-    </Card>
+    <div>
+      {data?.map((order) => {
+        return <Orders key={order.id} {...order} />;
+      })}
+    </div>
   );
 };
 
-const FulfillAspen: NextPage = () => {
-  const { data, isLoading, refetch } = api.aspenOrder.getOrders.useQuery();
+const Orders = ({ ...order }) => {
+  const { id, lines } = order;
+  console.log(lines); // const handleCreateOrder = async () => {
+  //   const req = await fetch("/api/ordoro/aspen/createAspenOrder", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Origin": "*",
+  //     },
+  //     body: JSON.stringify({
+  //       orderNumber: order.,
+  //       orderContents: order.orderContents,
+  //     }),
+  //   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  //   const res = (await req.json()) as unknown;
 
-  const handleCreateOrder = async () => {
-    const req = await fetch("/api/ordoro/aspen/createAspenOrder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(
-        data?.map((order) => {
-          order.orderNumber,
-            order.officeName,
-            order.lines.map((line) => line.price);
-        })
-      ),
-    });
-    const res = (await req.json()) as unknown;
+  //   if (!res) {
+  //     throw new Error("No response");
+  //   }
+  //   // refetch().catch(console.error);
 
-    if (!res) {
-      throw new Error("No response");
-    }
-
-    refetch().catch(console.error);
-    // await getOrders();
-
-    return data;
-  };
+  //   return data;
+  // };
 
   return (
     <main>
       <h1>Fulfill Aspen</h1>
       <section className="m-auto flex flex-row items-center justify-center gap-3">
         {/* TODO: Check styling here */}
-        {data?.map((order) => (
-          <OrderCard
-            key={order.orderNumber}
-            orderNumber={`Order Number: ${order.orderNumber}`}
-            orderContents={order.lines
-              .filter((line) => line.quantity > 0)
-              .map((line) => `${line.quantity} x ${line.productName}`)
-              .join("\n")}
-            orderPrice={order.lines.map((line) => line.price).join("\n")}
-            madeBy={order.createdBy as string}
-            handler={() => {
-              console.log("Create Order");
-            }}
-          />
-        ))}
+        {/* {order} */}
       </section>
     </main>
   );
 };
 
-export default FulfillAspen;
+export default FulfillPage;

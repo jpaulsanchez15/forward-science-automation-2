@@ -88,9 +88,6 @@ const formSchema = z.object({
 const CreateAspenForm = () => {
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<SugarOffice[]>([]);
-  const [question, showQuestion] = useState(false);
-  const [loading, isLoading] = useState(false);
-  const [error, setError] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -131,6 +128,7 @@ const CreateAspenForm = () => {
       trackingNumber: "",
       ordoroLink: "",
     });
+    console.log("values", values);
     form.reset();
 
     return;
@@ -155,6 +153,8 @@ const CreateAspenForm = () => {
       fs88 * 20 +
       fs08 * 125;
 
+    console.log("price", price);
+
     form.setValue("price", price);
   };
 
@@ -163,9 +163,7 @@ const CreateAspenForm = () => {
   useEffect(() => {
     (async () => {
       setSuggestions([]);
-      setError("");
       if (debouncedQuery.length > 0) {
-        isLoading(true);
         const res = await fetch(
           `/api/sugar/aspen/findAspenOffice?officeName=${debouncedQuery}`,
           {
@@ -174,16 +172,13 @@ const CreateAspenForm = () => {
         );
 
         if (!res.ok) {
-          isLoading(false);
           setSuggestions([]);
-          setError("No results found.");
           return;
         }
 
         const data = (await res.json()) as SugarOffice[];
 
         setSuggestions(data);
-        isLoading(false);
         return;
       }
     })();
@@ -192,9 +187,6 @@ const CreateAspenForm = () => {
   useEffect(() => {
     handlePriceChange();
   }, [form.watch("products"), handlePriceChange]);
-
-  const { officeName, orderNumber, price } = form.getValues();
-  console.table({ officeName, orderNumber, price });
 
   return (
     <Form {...form}>
@@ -306,6 +298,7 @@ const CreateAspenForm = () => {
               </span>
             </CollapsibleTrigger>
             <CollapsibleContent className="grid grid-cols-3 gap-3">
+              {/* Make a clear field button to clear if the selection was wrong. */}
               {accessories.map((accessory) => {
                 return (
                   <FormField
@@ -364,6 +357,7 @@ const CreateAspenForm = () => {
                       position: "bottom-center",
                       duration: 5000,
                     });
+                    form.setValue("officeName", suggestion.name);
                     form.setValue("officeId", suggestion.id);
                     setSuggestions([]);
                     setQuery("");
