@@ -6,21 +6,26 @@ import {
 } from "@/server/api/trpc";
 
 export const aspenRouter = createTRPCRouter({
-  getOrders: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .query(({ ctx }) => {
-      return ctx.prisma.aspenOrder.findMany({
+  getOrder: protectedProcedure
+    .input(z.object({ orderNumber: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.aspenOrder.findUnique({
         where: {
-          trackingNumber: {
-            equals: "",
-          },
+          orderNumber: input.orderNumber,
+        },
+        include: {
+          lines: true,
         },
       });
     }),
+  getOrders: protectedProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.prisma.aspenOrder.findMany({
+      include: {
+        lines: true,
+      },
+    });
+    return orders;
+  }),
   createOrder: protectedProcedure
     .input(
       z.object({
@@ -44,35 +49,49 @@ export const aspenRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       // TODO: Change the input here for this.
       return ctx.prisma.aspenOrder.create({
-        // TODO: Fix this.
+        // TODO: Look into pricing, seems bugged.
         data: {
           orderNumber: input.orderNumber,
           officeName: input.officeName,
           ordoroLink: "",
           trackingNumber: "",
-          price: input.price,
           lines: {
             create: [
               {
                 productName: "TheraStom",
                 sku: "TS-16-12",
                 quantity: input.products.theraStom || 0,
+                price: input.products.theraStom ?? 0 * 63,
               },
               {
                 productName: "OxiStom",
-                quantity: input.products.oxiStom,
+                sku: "OX-13-6",
+                quantity: input.products.oxiStom || 0,
+                price: input.products.oxiStom ?? 0 * 63,
               },
               {
                 productName: "SalivaMax",
-                quantity: input.products.salivaMax,
+                sku: "SM",
+                quantity: input.products.salivaMax || 0,
+                price: input.products.salivaMax ?? 0 * 63,
               },
               {
                 productName: "OralID",
-                quantity: input.products.oralID,
+                sku: "FS-11",
+                quantity: input.products.oralID || 0,
+                price: input.products.oralID ?? 0 * 63,
               },
               {
-                productName: "accessories",
-                quantity: input.products.accessories.fs88,
+                productName: "FS88",
+                sku: "FS-88",
+                quantity: input.products.accessories.fs88 || 0,
+                price: input.products.accessories.fs88 ?? 0 * 63,
+              },
+              {
+                productName: "FS84",
+                sku: "FS-84",
+                quantity: input.products.accessories.fs84 || 0,
+                price: input.products.accessories.fs84 ?? 0 * 63,
               },
             ],
           },
@@ -114,16 +133,17 @@ export const aspenRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         orderNumber: z.string().optional(),
+        ordoroLink: z.string().optional(),
         // TODO: Add other optionals here.
       })
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.aspenOrder.update({
         where: {
-          id: input.id,
+          orderNumber: input.orderNumber,
         },
         data: {
-          orderNumber: input.orderNumber,
+          ordoroLink: input.ordoroLink,
         },
       });
     }),

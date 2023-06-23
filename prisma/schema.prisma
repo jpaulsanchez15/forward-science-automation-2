@@ -89,7 +89,7 @@ model AspenOrder {
     ordoroLink     String
     lines          Line[]
     createdBy      String?
-    trackingNumber String?  @unique
+    trackingNumber String?
     User           User?    @relation(fields: [userId], references: [id])
     userId         String?
 }

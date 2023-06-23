@@ -1,6 +1,8 @@
-import { type NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../server/db";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { env } from "../../../../env.mjs";
+import { api } from "@/utils/api";
+
+import type { SugarOffice } from "@/types/sugar/index";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
@@ -9,11 +11,18 @@ const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
+// TODO: See why this is fucked.
 const formattedDate =
   year + (month < 10 ? "0" : "") + month + (day < 10 ? "0" : "") + day;
 
+interface NextApiRequestWithBody extends NextApiRequest {
+  body: {
+    orderNumber: string;
+  };
+}
+
 const createAspenOrder = async (
-  req: NextApiRequest,
+  req: NextApiRequestWithBody,
   res: NextApiResponse
 ) => {
   if (req.method !== "POST") {
@@ -21,14 +30,17 @@ const createAspenOrder = async (
     return;
   } else {
     // Actually creates the order for the label to then be made in Ordoro.
-    const order = await prisma.aspenOrder.findUnique({
-      where: {
-        orderNumber: req.body.orderNumber,
-      },
+    const order = api.aspenOrder.getOrder.useQuery({
+      orderNumber: req.body.orderNumber,
     });
 
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+
     const getOfficeAddress = async () => {
-      const officeOrderName = order?.officeName;
+      const officeOrderName = order.data?.officeName;
       const sugarOfficeId = await fetch(
         `https://forward-science-automation.vercel.app/api/sugar/aspen/findAspenOffice?officeName=${officeOrderName}`,
         {
@@ -39,7 +51,7 @@ const createAspenOrder = async (
         }
       );
 
-      const data = await sugarOfficeId.json();
+      const data = (await sugarOfficeId.json()) as SugarOffice[];
 
       const {
         name,
@@ -48,7 +60,14 @@ const createAspenOrder = async (
         shipping_address_state,
         shipping_address_postalcode,
         shipping_address_country,
-      } = data[0];
+      } = data[0] ?? {
+        name: "",
+        shipping_address_street: "",
+        shipping_address_city: "",
+        shipping_address_state: "",
+        shipping_address_postalcode: "",
+        shipping_address_country: "",
+      };
 
       const address = {
         name,
@@ -88,28 +107,26 @@ const createAspenOrder = async (
       accessories: 0,
     };
 
-    const products = {
-      therastom: order?.therastom ?? 0,
-      oxistom: order?.oxistom ?? 0,
-      salivamax: order?.salivamax ?? 0,
-      oralid: order?.oralid ?? 0,
-      accessories: order?.accessories ?? 0,
-    };
+    const products = order.data?.lines.map((line) => {
+      return {
+        [line.productName]: line.quantity,
+      };
+    });
 
-    const productArray = Object.entries(products)
-      .map(([name, quantity]) => ({
+    const productArray = Object.entries(products ?? {})
+      .map(([productName, quantity]) => ({
         product: {
-          name: nameMap[name as keyof typeof nameMap],
-          sku: skuMap[name as keyof typeof skuMap],
-          price: priceMap[name as keyof typeof priceMap],
+          name: nameMap[productName as keyof typeof nameMap],
+          sku: skuMap[productName as keyof typeof skuMap],
+          price: priceMap[productName as keyof typeof priceMap],
         },
         quantity,
-        total_price: priceMap[name as keyof typeof priceMap] * quantity,
+        total_price: priceMap[productName as keyof typeof priceMap] * +quantity,
       }))
-      .filter((product) => product?.quantity > 0);
+      .filter((product) => +product?.quantity > 0);
 
     const payload = JSON.stringify({
-      order_id: `${formattedDate}-${order?.orderNumber}`,
+      order_id: `${formattedDate}-${order.data?.orderNumber ?? ""}`,
       billing_address: billingAddress,
       shipping_address: shippingAddress,
       lines: productArray,
@@ -126,21 +143,22 @@ const createAspenOrder = async (
       body: payload,
     });
 
-    const data = await response.json();
+    // TODO: Type Ordoro order
+    const ordoroData = (await response.json()) as unknown;
 
-    const updatedOrder = await prisma.aspenOrder.update({
-      where: {
-        orderNumber: req.body.orderNumber,
-      },
-      data: {
-        ordoroLink: `${data.order_number}`,
-      },
-    });
+    const { mutateAsync } = api.aspenOrder.updateOrder.useMutation();
+
+    // TODO: Fix typing on this.
+    const updatedOrder = await mutateAsync({
+      id: order.data?.id ?? 0,
+      orderNumber: req.body.orderNumber,
+      ordoroLink: ordoroData?.order_id,
+    }).catch((error) => console.error(error));
 
     res.status(201).json({ order: updatedOrder, message: "Order added to DB" });
 
     return;
   }
-}
+};
 
 export default createAspenOrder;

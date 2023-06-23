@@ -1,16 +1,18 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "../../../env.mjs";
+import type { SugarAuth } from "@/types/sugar/index";
 
 const SUGAR_BASE_URL = env.SUGAR_BASE_URL;
 
 interface NextApiRequestWithSugarToken extends NextApiRequest {
   access_token: string;
 }
+
 // TODO: Type this one
-const sugarMiddleware = (handler: any) => {
+const sugarMiddleware = (handler: (req: NextApiRequestWithSugarToken, res: NextApiResponse) => Promise<void>) => {
   return async (req: NextApiRequestWithSugarToken, res: NextApiResponse) => {
     try {
-      const response = await fetch(`${SUGAR_BASE_URL}rest/v11/oauth2/token`, {
+      const response: Response = await fetch(`${SUGAR_BASE_URL}rest/v11/oauth2/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +29,7 @@ const sugarMiddleware = (handler: any) => {
         }),
       });
 
-      const data = await response.json();
+      const data: SugarAuth = await response.json() as SugarAuth;
 
       const { access_token: accessToken } = data;
 

@@ -27,19 +27,46 @@ import { useForm } from "react-hook-form";
 import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import type { SugarOffice } from "@/types/sugar";
 
 //TODO: Find other accessories that I need to put in here.
 type Accessories = {
-  name: "fs84" | "fs88";
+  name: "fs84" | "fs88" | "fs08";
 }[];
 
-const accessories: Accessories = [{ name: "fs84" }, { name: "fs88" }];
+type Products = {
+  name: "theraStom" | "oxiStom" | "salivaMax" | "oralID";
+}[];
+
+const accessories: Accessories = [
+  { name: "fs84" },
+  { name: "fs88" },
+  { name: "fs08" },
+];
+
+const products: Products = [
+  {
+    name: "theraStom",
+  },
+  {
+    name: "oxiStom",
+  },
+  {
+    name: "salivaMax",
+  },
+  {
+    name: "oralID",
+  },
+];
 
 const formSchema = z.object({
   orderNumber: z.string().min(1, {
     message: "You need to provide an order number!",
   }),
-  officeName: z.string().min(1, {
+  officeName: z.string().min(0, {
+    message: "You need to provide an office name!",
+  }),
+  officeId: z.string().min(1, {
     message: "You need to provide an office name!",
   }),
   products: z.object({
@@ -50,6 +77,7 @@ const formSchema = z.object({
     accessories: z.object({
       fs88: z.number().optional(),
       fs84: z.number().optional(),
+      fs08: z.number().optional(),
     }),
   }),
   price: z.number().min(1, {
@@ -59,16 +87,17 @@ const formSchema = z.object({
 
 const CreateAspenForm = () => {
   const [query, setQuery] = useState<string>("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [currentOffice, setCurrentOffice] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<SugarOffice[]>([]);
   const [question, showQuestion] = useState(false);
   const [loading, isLoading] = useState(false);
   const [error, setError] = useState<string>("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       orderNumber: "",
       officeName: "",
+      officeId: "",
       products: {
         theraStom: 0,
         oxiStom: 0,
@@ -77,6 +106,7 @@ const CreateAspenForm = () => {
         accessories: {
           fs88: 0,
           fs84: 0,
+          fs08: 0,
         },
       },
       price: 0,
@@ -84,23 +114,24 @@ const CreateAspenForm = () => {
     mode: "all",
   });
 
-  const createOrder = api.aspenOrder.createOrder.useMutation({
-    onSuccess: (data) => {
-      toast.success(`Successfully created order ${data.orderNumber}`);
-      form.reset();
-    },
-    onError: (error) => {
-      return toast.error(error.message);
-    },
-  });
+  const { isLoading: buttonDisabled, mutateAsync } =
+    api.aspenOrder.createOrder.useMutation({
+      onSuccess: (data) => {
+        toast.success(`Successfully created order ${data.orderNumber}`);
+        form.reset();
+      },
+      onError: (error) => {
+        return toast.error(error.message);
+      },
+    });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    toast.success("Successfully created order", {
-      position: "bottom-center",
+    mutateAsync({
+      ...values,
+      trackingNumber: "",
+      ordoroLink: "",
     });
     form.reset();
-    // createOrder.mutateAsync(values)
 
     return;
   };
@@ -112,7 +143,7 @@ const CreateAspenForm = () => {
       salivaMax = 0,
       oxiStom = 0,
       oralID = 0,
-      accessories: { fs84 = 0, fs88 = 0 } = {},
+      accessories: { fs84 = 0, fs88 = 0, fs08 = 0 } = {},
     } = form.watch("products");
 
     const price =
@@ -121,7 +152,8 @@ const CreateAspenForm = () => {
       oxiStom * 25.5 +
       oralID * 1200 +
       fs84 * 20 +
-      fs88 * 20;
+      fs88 * 20 +
+      fs08 * 125;
 
     form.setValue("price", price);
   };
@@ -148,8 +180,7 @@ const CreateAspenForm = () => {
           return;
         }
 
-        const data = await res.json();
-        console.log(data);
+        const data = (await res.json()) as SugarOffice[];
 
         setSuggestions(data);
         isLoading(false);
@@ -161,6 +192,9 @@ const CreateAspenForm = () => {
   useEffect(() => {
     handlePriceChange();
   }, [form.watch("products"), handlePriceChange]);
+
+  const { officeName, orderNumber, price } = form.getValues();
+  console.table({ officeName, orderNumber, price });
 
   return (
     <Form {...form}>
@@ -189,6 +223,11 @@ const CreateAspenForm = () => {
                   <Input
                     placeholder="Enter Office Name"
                     {...field}
+                    value={
+                      form.getValues("officeName") !== ""
+                        ? form.getValues("officeName")
+                        : query
+                    }
                     onChange={(e) => setQuery(e.target.value)}
                   />
                 </FormControl>
@@ -218,130 +257,45 @@ const CreateAspenForm = () => {
           />
         </section>
         <section id="products-section" className="grid grid-cols-4 gap-4">
-          <FormField
-            control={form.control}
-            name="products.theraStom"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>TheraStom</FormLabel>
-                <FormControl>
-                  <Input
-                    className="hover:cursor-pointer"
-                    type="button"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (field.value === 0) return;
-                      form.setValue(
-                        "products.theraStom",
-                        (field.value as number) - 1
-                      );
-                    }}
-                    onClick={() =>
-                      form.setValue(
-                        "products.theraStom",
-                        (field.value as number) + 1
-                      )
-                    }
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="products.oxiStom"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>OxiStom</FormLabel>
-                <FormControl>
-                  <Input
-                    className="hover:cursor-pointer"
-                    type="button"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (field.value === 0) return;
-                      form.setValue(
-                        "products.oxiStom",
-                        (field.value as number) - 1
-                      );
-                    }}
-                    onClick={() =>
-                      form.setValue(
-                        "products.oxiStom",
-                        (field.value as number) + 1
-                      )
-                    }
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="products.salivaMax"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>SalivaMAX</FormLabel>
-                <FormControl>
-                  <Input
-                    className="hover:cursor-pointer"
-                    type="button"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (field.value === 0) return;
-                      form.setValue(
-                        "products.salivaMax",
-                        (field.value as number) - 1
-                      );
-                    }}
-                    onClick={() =>
-                      form.setValue(
-                        "products.salivaMax",
-                        (field.value as number) + 1
-                      )
-                    }
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="products.oralID"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>OralID</FormLabel>
-                <FormControl>
-                  <Input
-                    className="hover:cursor-pointer"
-                    type="button"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (field.value === 0) return;
-                      form.setValue(
-                        "products.oralID",
-                        (field.value as number) - 1
-                      );
-                    }}
-                    onClick={() =>
-                      form.setValue(
-                        "products.oralID",
-                        (field.value as number) + 1
-                      )
-                    }
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {products.map((product) => {
+            return (
+              <FormField
+                control={form.control}
+                key={product.name}
+                name={`products.${product.name}`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {product.name.charAt(0).toUpperCase() +
+                        product.name.slice(1)}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="hover:cursor-pointer"
+                        type="button"
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          if (field.value === 0) return;
+                          form.setValue(
+                            `products.${product.name}`,
+                            (field.value as number) - 1
+                          );
+                        }}
+                        onClick={() =>
+                          form.setValue(
+                            `products.${product.name}`,
+                            (field.value as number) + 1
+                          )
+                        }
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            );
+          })}
         </section>
         <section id="accessories-dropdown">
           <Collapsible>
@@ -392,9 +346,36 @@ const CreateAspenForm = () => {
           </Collapsible>
         </section>
 
-        <Button className="m-auto flex" type="submit">
+        <Button disabled={buttonDisabled} className="m-auto flex" type="submit">
           Submit
         </Button>
+
+        <div>
+          <section
+            className="m-auto grid w-full grid-cols-4 items-center justify-center gap-3"
+            id="suggestion-map"
+          >
+            {suggestions.map((suggestion) => {
+              return (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    toast.success(`Selected Office Name: ${suggestion.name}`, {
+                      position: "bottom-center",
+                      duration: 5000,
+                    });
+                    form.setValue("officeId", suggestion.id);
+                    setSuggestions([]);
+                    setQuery("");
+                  }}
+                  key={suggestion.id}
+                >
+                  {suggestion.name}
+                </Button>
+              );
+            })}
+          </section>
+        </div>
       </form>
     </Form>
   );

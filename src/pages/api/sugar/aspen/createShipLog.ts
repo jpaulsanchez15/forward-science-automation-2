@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "@/env.mjs";
+import type { SugarOffice } from "@/types/sugar/index";
 
 import sugarMiddleware from "../middleware";
 
@@ -7,6 +8,13 @@ const SUGAR_BASE_URL = env.SUGAR_BASE_URL;
 
 interface NextApiRequestWithSugarToken extends NextApiRequest {
   access_token: string;
+  body: {
+    description: string;
+    name: string;
+    order_no: string;
+    product_sales_total_c: string;
+    office: string;
+  };
 }
 
 const date = new Date();
@@ -44,7 +52,7 @@ const createShipLog = async (
           body: JSON.stringify(payload),
         });
 
-        const { id } = await response.json();
+        const { id } = (await response.json()) as { id: string };
 
         return id;
       };
@@ -72,7 +80,7 @@ const createShipLog = async (
           }
         );
 
-        const { id } = await response.json();
+        const { id } = (await response.json()) as { id: string };
 
         return id;
       };
@@ -102,7 +110,7 @@ const createShipLog = async (
             }
           );
 
-          const data = await response.json();
+          const data = (await response.json()) as SugarOffice;
 
           return data;
         }

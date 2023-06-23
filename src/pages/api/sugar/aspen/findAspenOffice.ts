@@ -2,8 +2,13 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "../../../../env.mjs";
 
 import sugarMiddleware from "../middleware";
+import type { SugarOffice } from "@/types/sugar/index";
 
 const SUGAR_BASE_URL = env.SUGAR_BASE_URL;
+
+type SugarOffices = {
+  records: SugarOffice[];
+};
 
 interface NextApiRequestWithSugarToken extends NextApiRequest {
   access_token: string;
@@ -21,7 +26,9 @@ const findAspenOffice = async (
     const officeName =
       req.query.officeName !== "" ? req.query.officeName : null;
 
-    const endpoint = `Accounts?filter[0][$or][1][name][$contains]=${officeName}`;
+    const endpoint = `Accounts?filter[0][$or][1][name][$contains]=${
+      officeName as string
+    }`;
 
     const response = await fetch(`${SUGAR_BASE_URL}rest/v11/${endpoint}`, {
       method: "GET",
@@ -31,7 +38,8 @@ const findAspenOffice = async (
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const data = await response.json();
+
+    const data: SugarOffices = (await response.json()) as SugarOffices;
 
     if (data.records.length === 0) {
       res.status(404).send("Office not found");
