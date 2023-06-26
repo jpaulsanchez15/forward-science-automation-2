@@ -63,6 +63,7 @@ export const IngAddressSchema = z.object({
 export type IngAddress = z.infer<typeof IngAddressSchema>;
 
 export const OrdoroOrderSchema = z.object({
+  error_message: z.union([z.null(), z.string()]).optional(),
   updated_date: z.union([z.null(), z.string()]).optional(),
   status: z.union([z.null(), z.string()]).optional(),
   notes_from_customer: z.null().optional(),
@@ -92,3 +93,61 @@ export interface NextApiRequestWithBody extends NextApiRequest {
     orderNumber: string;
   };
 }
+
+export interface AspenOrderBody extends NextApiRequest {
+  body: {
+    num: string;
+    lines: Array<{
+      shipper_id: number;
+      shipping_method: "GROUND_HOME_DELIVERY";
+      payment_account: string;
+      payment_type: "RECIPIENT";
+      packages: Array<{
+        box_shape: "YOUR_PACKAGING";
+        length: string;
+        width: string;
+        height: string;
+        weight: string;
+      }>;
+    }>;
+  };
+}
+
+export const PackageSchema = z.object({
+  box_shape: z.string(),
+  length: z.number(),
+  width: z.number(),
+  height: z.number(),
+  weight: z.number(),
+});
+export type Package = z.infer<typeof PackageSchema>;
+
+export const CarrierSchema = z.object({
+  id: z.number(),
+  link: z.string(),
+});
+export type Carrier = z.infer<typeof CarrierSchema>;
+
+export const OrdoroLabelResponseSchema = z.object({
+  message: z.string(),
+  tracking_number: z.string(),
+  package_tracking: z.string(),
+  cost: z.number(),
+  transaction_fee: z.number(),
+  estimated_delivery_date: z.string(),
+  shipping_method: z.string(),
+  display_shipping_method: z.string(),
+  tracking_url: z.string(),
+  ship_date: z.string(),
+  carrier_name: z.string(),
+  carrier: CarrierSchema,
+  packages: z.array(PackageSchema),
+  box_shape: z.string(),
+  length: z.number(),
+  width: z.number(),
+  height: z.number(),
+  insurance: z.null(),
+  insured_value: z.number(),
+  zone: z.null(),
+});
+export type OrdoroLabelResponseType = z.infer<typeof OrdoroLabelResponseSchema>;

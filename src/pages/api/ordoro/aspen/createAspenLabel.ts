@@ -1,21 +1,22 @@
-import { type NextApiRequest, type NextApiResponse } from "next";
-import { prisma } from "../../../../server/db";
+import {
+  type AspenOrderBody,
+  type OrdoroLabelResponseType,
+} from "@/types/ordoro";
+import { type NextApiResponse } from "next";
 import { env } from "../../../../env.mjs";
+import { prisma } from "../../../../server/db";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
 
-const createAspenLabel = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => {
+const createAspenLabel = async (req: AspenOrderBody, res: NextApiResponse) => {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
     // Creates the label for the previously created order.
-    const response = await fetch(
-      `https://api.ordoro.com/v3/order/${req.body.num}/label/fedex`,
+    const createLabelRes = await fetch(
+      `https://api.ordoro.com/v3${req.body.num}/label/fedex`,
       {
         method: "POST",
         headers: {
@@ -29,35 +30,37 @@ const createAspenLabel = async (
       }
     );
 
-    if (response.status == 404) {
+    if (createLabelRes.status == 404) {
       res.status(404).json({ message: "Order not found" });
       return;
     }
 
-    if (!response.ok) {
-      res.status(504).json({ message: "Error creating label" });
+    if (!createLabelRes.ok) {
+      res.status(500).json({ message: "Something went wrong" });
       return;
     }
 
-    const data = await response.json();
+    const data = (await createLabelRes.json()) as OrdoroLabelResponseType;
 
     const updatedOrder = await prisma.aspenOrder.update({
       where: {
-        orderNumber: req.body.num.slice(11),
+        orderNumber: req.body.num.slice(18),
       },
       data: {
         trackingNumber: data.tracking_number,
-        orderNumber: req.body.num.slice(11),
+        orderNumber: req.body.num.slice(18),
       },
     });
 
-    res
-      .status(201)
-      .json({ order: updatedOrder, message: "Tracking added to DB" });
+    res.status(201).json({
+      order: updatedOrder,
+      message: "Tracking added to DB",
+      data: data,
+    });
 
     // RETURN TRACKING NUMBER
     return;
   }
-}
+};
 
 export default createAspenLabel;

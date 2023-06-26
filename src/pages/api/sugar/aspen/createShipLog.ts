@@ -1,6 +1,6 @@
-import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "@/env.mjs";
 import type { SugarOffice } from "@/types/sugar/index";
+import { type NextApiRequest, type NextApiResponse } from "next";
 
 import sugarMiddleware from "../middleware";
 
@@ -31,11 +31,20 @@ const createShipLog = async (
     try {
       const accessToken = req.access_token;
 
-      const orderContents: string = req.body.description;
-      const tracking: string = req.body.name;
-      const orderNumberWithoutFirstChar: string = req.body.order_no;
-      const price: string = req.body.product_sales_total_c;
-      const officeId: string = req.body.office;
+      const orderContents = req.body.description;
+      const tracking = req.body.name;
+      const orderNumberWithoutFirstChar = req.body.order_no;
+      const price = req.body.product_sales_total_c;
+      const officeId = req.body.office;
+
+      console.table({
+        accessToken,
+        orderContents,
+        tracking,
+        orderNumberWithoutFirstChar,
+        price,
+        officeId,
+      });
 
       const createLog = async () => {
         const payload = {
@@ -53,6 +62,8 @@ const createShipLog = async (
         });
 
         const { id } = (await response.json()) as { id: string };
+
+        console.log("createLogId", id);
 
         return id;
       };
@@ -80,7 +91,11 @@ const createShipLog = async (
           }
         );
 
+        console.log("updateLogResponse", response);
+
         const { id } = (await response.json()) as { id: string };
+
+        console.log("updateLogId", id);
 
         return id;
       };
@@ -89,6 +104,7 @@ const createShipLog = async (
 
       const linkLogToOffice = async () => {
         if (!officeId) {
+          console.log("linklogtoffice here failed at !officeId", officeId);
           return;
         } else {
           const payload = {
@@ -96,6 +112,8 @@ const createShipLog = async (
             ids: [updatedLogId],
             link_name: "fs_shipping_accounts",
           };
+
+          console.log("linkLogToOfficePayload", payload);
 
           const response = await fetch(
             `${SUGAR_BASE_URL}rest/v11/Accounts/${officeId}/link`,
@@ -110,7 +128,10 @@ const createShipLog = async (
             }
           );
 
+          console.log("linkLogToOfficeResponse", response);
+
           const data = (await response.json()) as SugarOffice;
+          console.log("linkLogToOffice", data);
 
           return data;
         }

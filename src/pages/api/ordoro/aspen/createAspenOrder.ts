@@ -1,10 +1,9 @@
-import type { NextApiResponse } from "next";
 import { env } from "@/env.mjs";
+import type { NextApiResponse } from "next";
 
-import type { SugarOffice } from "@/types/sugar/index";
-import type { OrdoroOrder } from "@/types/ordoro";
-import type { NextApiRequestWithBody } from "@/types/ordoro";
 import { prisma } from "@/server/db";
+import type { NextApiRequestWithBody, OrdoroOrder } from "@/types/ordoro";
+import type { SugarOffice } from "@/types/sugar/index";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
@@ -33,12 +32,11 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
-    console.log(req.body);
+    // console.log(req.body);
     // Actually creates the order for the label to then be made in Ordoro.
     const order = await prisma.aspenOrder.findUnique({
       where: {
         orderNumber: req.body.orderNumber ?? "",
-        // id: req.body.id ?? "",
       },
       include: {
         lines: true,
@@ -65,7 +63,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       );
 
       const data = (await sugarOfficeId.json()) as SugarOffice[];
-      console.log("sugaroffice", data[0]?.id);
 
       const {
         name,
@@ -98,46 +95,38 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     const billingAddress = shippingAddress;
 
     const nameMap = {
-      therastom: "TheraStom 12 pk",
-      oxistom: "OxiStom 6 pk",
-      salivamax: "SalivaMAX® 10 pk of 30 ct boxes",
-      oralid: "OralID Kit (FS-11) Default Title",
+      TheraStom: "TheraStom 12 pk",
+      OxiStom: "OxiStom 6 pk",
+      SalivaMax: "SalivaMAX® 10 pk of 30 ct boxes",
+      OralID: "OralID Kit (FS-11) Default Title",
+      // TODO: Expand on this so it matches what we did earlier.
       accessories: "Customized Shipment",
     };
 
-    const skuMap = {
-      therastom: "TS-16-12",
-      oxistom: "OX-13-6",
-      salivamax: "42029121142953",
-      oralid: "FS-11",
-      accessories: "IDFL-Custom",
-    };
-
     const priceMap = {
-      therastom: 63,
-      oxistom: 25.5,
-      salivamax: 110,
-      oralid: 995,
+      TheraStom: 63,
+      OxiStom: 25.5,
+      SalivaMax: 110,
+      OralID: 995,
       accessories: 0,
     };
 
-    const products = order.lines.map((line) => {
-      return {
-        [line.productName]: line.quantity,
-      };
-    });
+    const productArray = order.lines
+      .map((line) => {
+        const productNameKey = line.productName as keyof typeof nameMap;
+        const priceKey = line.productName as keyof typeof priceMap;
 
-    const productArray = Object.entries(products ?? {})
-      .map(([productName, quantity]) => ({
-        product: {
-          name: nameMap[productName as keyof typeof nameMap],
-          sku: skuMap[productName as keyof typeof skuMap],
-          price: priceMap[productName as keyof typeof priceMap],
-        },
-        quantity,
-        total_price: priceMap[productName as keyof typeof priceMap] * +quantity,
-      }))
-      .filter((product) => +product?.quantity > 0);
+        return {
+          product: {
+            name: nameMap[productNameKey],
+            sku: line.sku,
+            price: priceMap[priceKey],
+          },
+          quantity: line.quantity,
+          total_price: priceMap[priceKey] * line.quantity,
+        };
+      })
+      .filter((line) => line.quantity > 0);
 
     const payload = JSON.stringify({
       order_id: `${formattedDate}-${order.orderNumber ?? ""}`,
@@ -145,8 +134,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       shipping_address: shippingAddress,
       lines: productArray,
     });
-
-    console.log("payload", payload);
 
     const response = await fetch(`https://api.ordoro.com/v3/order`, {
       method: "POST",
@@ -159,20 +146,21 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       body: payload,
     });
 
-    console.log("ordororesponse", response);
-
     const ordoroData = (await response.json()) as OrdoroOrder;
+    console.log(ordoroData);
 
     const updatedOrder = await prisma.aspenOrder.update({
       where: {
         orderNumber: req.body.orderNumber,
       },
       data: {
-        ordoroLink: `${ordoroData.order_number ?? ""}`,
+        ordoroLink: `${ordoroData.link ?? ""}`,
       },
     });
 
-    res.status(201).json({ order: updatedOrder, message: "Order added to DB" });
+    res
+      .status(201)
+      .json({ order: updatedOrder, message: "Order created in Ordoro." });
 
     return;
   }

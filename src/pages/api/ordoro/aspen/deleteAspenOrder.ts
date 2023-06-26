@@ -1,6 +1,6 @@
-import type { NextApiResponse } from "next";
+import { prisma } from "@/server/db";
 import type { NextApiRequestWithBody } from "@/types/ordoro";
-import { api } from "@/utils/api";
+import type { NextApiResponse } from "next";
 
 const deleteAspenOrder = async (
   req: NextApiRequestWithBody,
@@ -10,13 +10,16 @@ const deleteAspenOrder = async (
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
-    const { data, mutateAsync } = api.aspenOrder.deleteOrder.useMutation();
-
+    console.log(req.body);
     // Deletes the order from the database.
-    await mutateAsync({ orderNumber: req.body.orderNumber });
+    const order = await prisma.aspenOrder.delete({
+      where: {
+        orderNumber: req.body?.orderNumber,
+      },
+    });
 
     // Return the order.
-    res.status(200).json({ data });
+    res.status(200).json({ order });
   }
 };
 

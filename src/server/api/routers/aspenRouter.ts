@@ -1,9 +1,9 @@
-import { z } from "zod";
 import {
   createTRPCRouter,
   // publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
+import { z } from "zod";
 
 export const aspenRouter = createTRPCRouter({
   getOrder: protectedProcedure
@@ -20,6 +20,9 @@ export const aspenRouter = createTRPCRouter({
     }),
   getOrders: protectedProcedure.query(async ({ ctx }) => {
     const orders = await ctx.prisma.aspenOrder.findMany({
+      where: {
+        fileAway: false || undefined,
+      },
       include: {
         lines: true,
       },
@@ -71,7 +74,7 @@ export const aspenRouter = createTRPCRouter({
               },
               {
                 productName: "SalivaMax",
-                sku: "SM",
+                sku: "42029121142953",
                 quantity: input.products.salivaMax || 0,
                 price: (input.products.salivaMax?.valueOf() ?? 0) * 120,
               },
@@ -115,7 +118,7 @@ export const aspenRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        trackingNumber: z.string(),
+        fileAway: z.boolean(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -124,7 +127,10 @@ export const aspenRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          trackingNumber: input.trackingNumber,
+          fileAway: input.fileAway,
+        },
+        include: {
+          lines: true,
         },
       });
     }),

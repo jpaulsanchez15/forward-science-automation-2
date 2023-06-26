@@ -1,0 +1,122 @@
+{
+  "TS-16-6":{
+     "dimensions":{
+        "length":9.5,
+        "width":8,
+        "height":5.5,
+        "lb":48
+     }
+  },
+  "GG-20-01":{
+    "dimensions":{
+       "length":9,
+       "width":6,
+       "height":5,
+       "lb":1
+    }
+ },
+  "42029121142953":{
+     "dimensions":{
+        "length":14,
+        "width":10,
+        "height":5,
+        "lb":32
+     }
+  },
+  "BS-01-10":{
+     "dimensions":{
+        "length":14,
+        "width":10,
+        "height":5,
+        "lb":16
+     }
+  },
+  "OX-13-6":{
+     "dimensions":{
+        "length":9.5,
+        "width":8,
+        "height":5.5,
+        "lb":48
+     }
+  },
+  "No Product SKU":{
+     "dimensions":{
+        "length":14,
+        "width":10,
+        "height":5,
+        "lb":32
+     }
+  },
+  "FS-701":{
+     "dimensions":{
+        "length":9,
+        "width":6,
+        "height":5,
+        "lb":1
+     }
+  },
+  "FS-18":{
+     "dimensions":{
+        "length":9,
+        "width":6,
+        "height":5,
+        "lb":1
+     }
+  },
+  "TS-16-12":{
+     "dimensions":{
+        "length":11.5,
+        "width":8.75,
+        "height":10,
+        "lb":224
+     }
+  },
+  "FS-08":{
+     "dimensions":{
+        "length":9,
+        "width":6,
+        "height":5,
+        "lb":1
+     }
+  },
+  "FS-03":{
+     "dimensions":{
+        "length":9,
+        "width":6,
+        "height":5,
+        "lb":32
+     }
+  },
+  "FS-88":{
+     "dimensions":{
+        "length":9,
+        "width":6,
+        "height":5,
+        "lb":32
+     }
+  },
+  "IDFL-Custom":{
+    "dimensions":{
+       "length":9,
+       "width":6,
+       "height":5,
+       "lb":32
+    }
+ },
+ "FS-11": {
+    "dimensions": {
+       "length": 14,
+       "width": 10,
+       "height": 8,
+       "lb": 64
+    }
+ },
+ "31497175334973": {
+    "dimensions": {
+       "length": 9,
+       "width": 6,
+       "height": 5,
+       "lb": 32
+    }
+ }
+}

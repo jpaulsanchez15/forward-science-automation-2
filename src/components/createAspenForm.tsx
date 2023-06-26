@@ -114,7 +114,9 @@ const CreateAspenForm = () => {
   const { isLoading: buttonDisabled, mutateAsync } =
     api.aspenOrder.createOrder.useMutation({
       onSuccess: (data) => {
-        toast.success(`Successfully created order ${data.orderNumber}`);
+        toast.success(`Successfully created order ${data.orderNumber}`, {
+          position: "bottom-center",
+        });
         form.reset();
       },
       onError: (error) => {
@@ -128,7 +130,6 @@ const CreateAspenForm = () => {
       trackingNumber: "",
       ordoroLink: "",
     });
-    console.log("values", values);
     form.reset();
 
     return;
@@ -152,8 +153,6 @@ const CreateAspenForm = () => {
       fs84 * 20 +
       fs88 * 20 +
       fs08 * 125;
-
-    console.log("price", price);
 
     form.setValue("price", price);
   };
