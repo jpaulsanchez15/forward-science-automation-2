@@ -21,7 +21,7 @@ export const aspenRouter = createTRPCRouter({
   getOrders: protectedProcedure.query(async ({ ctx }) => {
     const orders = await ctx.prisma.aspenOrder.findMany({
       where: {
-        fileAway: false || undefined,
+        fileAway: false,
       },
       include: {
         lines: true,

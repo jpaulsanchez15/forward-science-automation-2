@@ -294,6 +294,9 @@ const Orders = ({
           }),
         });
         const shipLogResponse = (await shipLog.json()) as unknown;
+        toast.success(
+          `PO-${order.orderNumber ?? "Unknown PO Number"}'s label created!`
+        );
         return shipLogResponse;
       }
     } catch (error) {
@@ -301,9 +304,6 @@ const Orders = ({
       setHandleLoading(false);
       return;
     } finally {
-      toast.success(
-        `PO-${order.orderNumber ?? "Unknown PO Number"}'s label created!`
-      );
       setHandleLoading(false);
       refetch().catch(console.error);
       console.log("done ceating label");

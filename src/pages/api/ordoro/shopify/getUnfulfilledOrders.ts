@@ -1,5 +1,5 @@
-import { type NextApiRequest, NextApiResponse } from "next";
-import { env } from "../../../../env.mjs";
+import { type NextApiRequest, type NextApiResponse } from "next";
+import { env } from "@/env.mjs";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
@@ -29,7 +29,7 @@ const getUnfullfiledOrders = async (
         },
       }
     );
-    const data = await response.json();
+    const data = (await response.json()) as unknown;
     res
       .status(200)
       .json(
