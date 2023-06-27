@@ -1,6 +1,7 @@
-import { type NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 import { prisma } from "../../../../server/db";
 import { env } from "../../../../env.mjs";
+import type { OrdoroLabelResponseType } from "@/types/ordoro";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
@@ -13,8 +14,28 @@ type Line = {
   total_price: number;
 };
 
+interface ShopifyOrderBody extends NextApiRequest {
+  body: {
+    num: string;
+    order: Array<Line>;
+    lines: Array<{
+      shipper_id: number;
+      shipping_method: "GROUND_HOME_DELIVERY";
+      payment_account: string;
+      payment_type: "RECIPIENT";
+      packages: Array<{
+        box_shape: "YOUR_PACKAGING";
+        length: string;
+        width: string;
+        height: string;
+        weight: string;
+      }>;
+    }>;
+  };
+}
+
 const createShopifyLabel = async (
-  req: NextApiRequest,
+  req: ShopifyOrderBody,
   res: NextApiResponse
 ) => {
   // Creates label for Shopify orders.
@@ -22,8 +43,9 @@ const createShopifyLabel = async (
     res.status(405).send("Method not allowed");
     return;
   } else {
+    console.log(req.body);
     const response = await fetch(
-      `${ORDORO_API_URL}/${req.body.num}/label/fedex`,
+      `${ORDORO_API_URL}/${req.body.num ?? ""}/label/fedex`,
       {
         method: "POST",
         headers: {
@@ -37,7 +59,8 @@ const createShopifyLabel = async (
       }
     );
 
-    const data = await response.json();
+    const data = (await response.json()) as OrdoroLabelResponseType;
+    console.log(data);
 
     const { tracking_number: trackingNumber } = data;
 
@@ -72,6 +95,6 @@ const createShopifyLabel = async (
 
     return;
   }
-}
+};
 
 export default createShopifyLabel;

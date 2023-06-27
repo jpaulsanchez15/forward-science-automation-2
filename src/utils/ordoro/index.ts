@@ -30,8 +30,8 @@ export const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
     return totalProducts.push(...Array(item.quantity).fill(item.sku));
   });
 
-  const reduced: Record<string, number> = totalProducts.reduce(
-    (acc, cv) => ((acc[cv] = ++acc[cv] || 1), acc),
+  const reduced = totalProducts.reduce(
+    (acc: any, cv: any) => ((acc[cv] = ++acc[cv] || 1), acc),
     {}
   );
 

@@ -189,6 +189,7 @@ const createShipLog = async (
         "SalivaMAX®  10 pk of 30 ct boxes",
         "[Pre-Order] BioStom™ 10 pk",
         "GelGauze™",
+        "Extraction Package",
       ];
 
       if (!ambassador) {

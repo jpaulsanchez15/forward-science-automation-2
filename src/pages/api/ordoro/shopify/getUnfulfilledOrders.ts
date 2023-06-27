@@ -1,4 +1,5 @@
 import { env } from "@/env.mjs";
+import { OrdoroOrder } from "@/types/ordoro";
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
@@ -30,15 +31,16 @@ const getUnfullfiledOrders = async (
       }
     );
     const data = (await response.json()) as unknown;
+
     res.status(200).json(
-      data.order.sort((a: Order, b: Order) =>
+      data.order.sort((a, b) =>
         a.order_number > b.order_number
           ? -1
           : b.order_number > a.order_number
           ? 1
           : 0
       )
-      // .filter((order: Order) => order.order_number.startsWith("1-"))
+      // .filter((order) => order?.order_number.startsWith("1-"))
     );
 
     return data;
