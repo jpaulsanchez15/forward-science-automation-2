@@ -1,14 +1,18 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { env } from "../../../../env.mjs";
 
+import type { SugarOffice } from "@/types/sugar";
 import sugarMiddleware from "../middleware";
-
 
 const SUGAR_BASE_URL = env.SUGAR_BASE_URL;
 
 interface NextApiRequestWithSugarToken extends NextApiRequest {
   access_token: string;
 }
+
+type SugarOffices = {
+  records: SugarOffice[];
+};
 
 const findShopifyOffice = async (
   req: NextApiRequestWithSugarToken,
@@ -24,7 +28,11 @@ const findShopifyOffice = async (
     const phone = req.query.phone !== "" ? req.query.phone : null;
     const address = req.query.address !== "" ? req.query.address : null;
 
-    const endpoint = `Accounts?filter[0][$or][1][phone_office][$contains]=${phone}&filter[0][$or][0][name][$contains]=${officeName}&filter[0][$or][2][shipping_address_street][$contains]=${address}`;
+    const endpoint = `Accounts?filter[0][$or][1][phone_office][$contains]=${
+      phone ?? ""
+    }&filter[0][$or][0][name][$contains]=${
+      officeName ?? ""
+    }&filter[0][$or][2][shipping_address_street][$contains]=${address ?? ""}`;
 
     const response = await fetch(`${SUGAR_BASE_URL}rest/v11/${endpoint}`, {
       method: "GET",
@@ -34,7 +42,7 @@ const findShopifyOffice = async (
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const data = await response.json();
+    const data = (await response.json()) as SugarOffices;
 
     if (data.records.length === 0) {
       res.status(404).send({ message: "Office not found" });
@@ -44,6 +52,6 @@ const findShopifyOffice = async (
       return;
     }
   }
-}
+};
 
 export default sugarMiddleware(findShopifyOffice);
