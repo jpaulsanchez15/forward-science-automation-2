@@ -30,7 +30,9 @@ type CardProps = {
   npi?: boolean;
   price?: number;
   processing?: boolean;
+  buttonText?: string;
   fulfillHandler?: () => void | Promise<void> | Promise<unknown>;
+  addToSugarHandler?: () => void | Promise<void> | Promise<unknown>;
 };
 
 const Tooltips = ({
@@ -83,7 +85,7 @@ const Cards = ({ ...props }: CardProps) => {
           className="m-auto mb-4 flex flex-col items-center justify-center"
           onClick={props.fulfillHandler}
         >
-          Fullfill
+          {props.buttonText}
         </Button>
         {props.processing ? (
           <div className="flex flex-col">
@@ -318,6 +320,10 @@ const Orders = ({
             }, 0) ?? 0
           }
           shopifyLink={shopify.id}
+          processing={processing}
+          buttonText={!processing && !complete ? "Create Label" : "Processing"}
+          fulfillHandler={createLabel}
+          addToSugarHandler={handleRetrieveSugarOfficeClick}
         />
       </div>
     </div>
