@@ -127,12 +127,14 @@ const Cards = ({ ...props }: CardProps) => {
 
 export const getServerSideProps = async () => {
   const ordoroShopifyOrdersRes = await fetch(
-    "http://localhost:3000/api/ordoro/shopify/getUnfulfilledOrders"
+    "http://forward-science-automation.vercel.app/api/ordoro/shopify/getUnfulfilledOrders"
   );
   const ordoroShopifyOrdersData =
     (await ordoroShopifyOrdersRes.json()) as OrdoroOrder[];
 
-  const shopifyOrderRes = await fetch("http://localhost:3000/api/shopify");
+  const shopifyOrderRes = await fetch(
+    "http://forward-science-automation.vercel.app/api/shopify"
+  );
 
   const shopifyOrderData =
     (await shopifyOrderRes.json()) as ShopifyResponseType[];
