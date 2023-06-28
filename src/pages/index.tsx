@@ -46,6 +46,7 @@ const Home = () => {
       router.push("/api/auth/signin");
     },
   });
+
   return (
     <>
       <Head>

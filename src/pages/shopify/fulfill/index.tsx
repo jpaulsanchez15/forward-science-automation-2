@@ -63,12 +63,15 @@ const Cards = ({ ...props }: CardProps) => {
     <div className="h-full">
       <Card className="h-full w-full">
         <CardHeader>
-          <Tooltips text="This is an FS Ambassador order!">
-            {props.ambassador && <Info className="right-0 top-0 flex" />}
-          </Tooltips>
-          <Tooltips text="No NPI Detected! Please ensure they are a medical professional.">
-            {props.npi ? null : <AlertTriangle />}
-          </Tooltips>
+          <div className="flex flex-row gap-3">
+            <Tooltips text="This is an FS Ambassador order!">
+              {props.ambassador && <Info />}
+            </Tooltips>
+            <Tooltips text="No NPI Detected! Please ensure they are a medical professional.">
+              {props.npi ? null : <AlertTriangle />}
+            </Tooltips>
+          </div>
+
           <CardTitle>
             <Link
               target="_blank"
@@ -215,7 +218,7 @@ const Orders = ({
   const [selectedOffice, setSelectedOffice] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const ambassador = shopify.tags?.includes("FS Ambassador") ?? false;
+  const ambassador = shopify.tags?.includes("FS_Ambassador") ?? false;
   const { note } = shopify.customer ?? "";
   const npi = /\d/.test(note ?? "");
 
@@ -303,9 +306,6 @@ const Orders = ({
 
     return;
   };
-
-  const price = shopify.total_price;
-  console.log(shopify.order_number, price);
 
   const handleAddToSugarClick = async (id: string) => {
     try {
