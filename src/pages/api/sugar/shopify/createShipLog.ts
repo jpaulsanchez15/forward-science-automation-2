@@ -134,7 +134,7 @@ const createShipLog = async (
           name: `FU Shopify Order ${orderNumberWithoutFirstChar}`,
           description: `${orderContents} \n $${price}`, // idfl discount yea or nah
           date_due: date,
-          assigned_user_id: "583fe47e-cd7d-4db1-8789-fcae7355f548",
+          assigned_user_id: "6ef19564-2a62-4637-aace-d02fec4a7be4",
           // For some reason has to be a string, not var
           // const jps = "583fe47e-cd7d-4db1-8789-fcae7355f548";
           // const cd = "6ef19564-2a62-4637-aace-d02fec4a7be4"
