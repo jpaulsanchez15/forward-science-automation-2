@@ -18,6 +18,7 @@ import type { GetOrdersType } from "@/types/trpc";
 import { api } from "@/utils/api";
 import { formatAspenOrder } from "@/utils/ordoro";
 import toast from "react-hot-toast";
+import Head from "next/head";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
@@ -89,6 +90,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
 
 const FulfillPage: NextPage = () => {
   const { data, isLoading, refetch } = api.aspenOrder.getOrders.useQuery();
+  const [disabled, isDisabled] = useState(false);
 
   if (isLoading) {
     return (
@@ -106,48 +108,73 @@ const FulfillPage: NextPage = () => {
   }
 
   return (
-    <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
-      <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
-      <div className="mx-auto my-3 flex flex-row items-center justify-center gap-3">
-        {data.length > 0 ? (
-          data?.map((order) => {
-            return <Orders key={order.id} order={order} refetch={refetch} />;
-          })
-        ) : (
-          <div>
-            <span className="mx-auto flex items-center justify-center text-center font-light italic text-gray-400">
-              No orders to fulfill!
-            </span>
+    <>
+      <Head>
+        <title>Forward Science Automation | Fulfill Aspen</title>
+      </Head>
+      <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
+        <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
+        <div className="mx-auto my-3 flex flex-row items-center justify-center gap-3">
+          {data.length > 0 ? (
+            data
+              ?.sort((a, b) =>
+                a.createdAt > b.createdAt
+                  ? -1
+                  : b.createdAt > a.createdAt
+                  ? 1
+                  : 0
+              )
+              .map((order) => {
+                return (
+                  <Orders
+                    key={order.id}
+                    order={order}
+                    refetch={refetch}
+                    disabled={disabled}
+                    isDisabled={isDisabled}
+                  />
+                );
+              })
+          ) : (
             <div>
-              <div className="max-w-2xlpy-32 mx-auto sm:py-48 lg:py-32">
-                <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-                  <div className="hover:bg-vanilla relative rounded-full bg-white px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:bg-gray-400 hover:ring-gray-900/20 dark:bg-white dark:text-black dark:hover:bg-gray-400">
-                    Need to create more orders?{" "}
-                    <Link
-                      href="/aspen/create"
-                      className="text-coral-pink font-semibold"
-                    >
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      <span aria-hidden="true">&rarr;</span>
-                    </Link>
+              <span className="mx-auto flex items-center justify-center text-center font-light italic text-gray-400">
+                No orders to fulfill!
+              </span>
+              <div>
+                <div className="max-w-2xlpy-32 mx-auto sm:py-48 lg:py-32">
+                  <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+                    <div className="hover:bg-vanilla relative rounded-full bg-white px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:bg-gray-400 hover:ring-gray-900/20 dark:bg-white dark:text-black dark:hover:bg-gray-400">
+                      Need to create more orders?{" "}
+                      <Link
+                        href="/aspen/create"
+                        className="text-coral-pink font-semibold"
+                      >
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        <span aria-hidden="true">&rarr;</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </main>
+          )}
+        </div>
+      </main>
+    </>
   );
 };
 
 const Orders = ({
   order,
   refetch,
+  disabled,
+  isDisabled,
 }: {
   order: GetOrdersType;
   // TODO: Type this any
   refetch: () => Promise<any>;
+  disabled: boolean;
+  isDisabled: (disabled: boolean) => void;
 }) => {
   const [handleLoading, setHandleLoading] = useState(false);
   const deletedOrder = api.aspenOrder.deleteOrder.useMutation({
@@ -171,6 +198,7 @@ const Orders = ({
   });
 
   const handleCreateOrder = async () => {
+    isDisabled(true);
     setHandleLoading(true);
     try {
       const res = await fetch("/api/ordoro/aspen/createAspenOrder", {
@@ -195,7 +223,7 @@ const Orders = ({
       return;
     } finally {
       setHandleLoading(false);
-      console.log("done creating order");
+      isDisabled(false);
     }
   };
 
@@ -233,6 +261,8 @@ const Orders = ({
 
       const labelCreatedResponse = (await labelCreated.json()) as OrdoroLabel;
 
+      if (labelCreatedResponse.message == "Error 3050: Invalid Recipient Postal Code Format") throw new Error("Zip code is incorrect. Please go to the order in Ordoro and fix it, then go to Sugar and fix the zip code.")
+
       const shipLogItemsMap = order.lines.map((line) => {
         return {
           name: line.productName,
@@ -252,61 +282,44 @@ const Orders = ({
         { name: "FS-88", value: shipLogItemsMap[4]?.value },
         { name: "FS-84", value: shipLogItemsMap[5]?.value },
       ];
+      const listItemString = shipLogItems
+        .filter((item) => item?.value ?? 0 > 0)
+        .map((item) => {
+          return `${item.value ?? 0} x ${item.name}`;
+        })
+        .join("\n");
 
-      if (labelCreatedResponse?.data.message === "Order not found") {
-        setHandleLoading(false);
-        return alert(
-          "The order hasn't been created in Ordoro yet. Please wait a couple of seconds to try again!"
-        );
-      } else if (
-        labelCreatedResponse?.data.message === "Error creating label"
-      ) {
-        setHandleLoading(false);
-        return alert(
-          "Order timed out. There was an error completing the order. I think I still made the label, but just check the order in Ordoro and Sugar just to make sure."
-        );
-      } else {
-        const listItemString = shipLogItems
-          .filter((item) => item?.value ?? 0 > 0)
-          .map((item) => {
-            return `${item.value ?? 0} x ${item.name}`;
-          })
-          .join("\n");
-
-        const shipLog = await fetch("/api/sugar/aspen/createShipLog", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            office: officeId,
-            description: listItemString,
-            name: labelCreatedResponse.data.tracking_number,
-            order_no: order.orderNumber,
-            product_sales_total_c:
-              order.lines
-                .reduce(
-                  (acc, line) =>
-                    acc + Number(line.quantity) * Number(line.price),
-                  0
-                )
-                .toFixed(2) ?? null,
-          }),
-        });
-        const shipLogResponse = (await shipLog.json()) as unknown;
-        toast.success(
-          `PO-${order.orderNumber ?? "Unknown PO Number"}'s label created!`
-        );
-        return shipLogResponse;
-      }
+      const shipLog = await fetch("/api/sugar/aspen/createShipLog", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          office: officeId,
+          description: listItemString,
+          name: labelCreatedResponse.data?.tracking_number,
+          order_no: order.orderNumber,
+          product_sales_total_c:
+            order.lines
+              .reduce(
+                (acc, line) => acc + Number(line.quantity) * Number(line.price),
+                0
+              )
+              .toFixed(2) ?? null,
+        }),
+      });
+      await shipLog.json();
+      toast.success(
+        `PO-${order.orderNumber ?? "Unknown PO Number"}'s label created!`
+      );
+      return labelCreatedResponse;
     } catch (error) {
-      toast.error("Error creating label!");
+      toast.error(error);
       setHandleLoading(false);
       return;
     } finally {
       setHandleLoading(false);
       refetch().catch(console.error);
-      console.log("done ceating label");
       return;
     }
   };
@@ -356,7 +369,7 @@ const Orders = ({
       }
       completed={order.trackingNumber !== ""}
       ordoroLink={order.ordoroLink}
-      disabled={handleLoading}
+      disabled={handleLoading || disabled}
       deleteHandler={handleDeleteOrder}
       processing={handleLoading}
       fileAwayHandler={handleFileAwayOrder}

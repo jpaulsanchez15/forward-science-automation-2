@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { SugarOffice } from "@/types/sugar";
@@ -86,7 +85,7 @@ const formSchema = z.object({
   }),
 });
 
-const CreateAspenForm = () => {
+const ExampleForm = () => {
   const [query, setQuery] = useState<string>("");
   const [fetching, isFetching] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<SugarOffice[]>([]);
@@ -113,25 +112,8 @@ const CreateAspenForm = () => {
     mode: "all",
   });
 
-  const { isLoading: buttonDisabled, mutateAsync } =
-    api.aspenOrder.createOrder.useMutation({
-      onSuccess: (data) => {
-        toast.success(`Successfully created order ${data.orderNumber}`, {
-          position: "bottom-center",
-        });
-        form.reset();
-      },
-      onError: (error) => {
-        return toast.error(error.message);
-      },
-    });
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutateAsync({
-      ...values,
-      trackingNumber: "",
-      ordoroLink: "",
-    });
+  const onSubmit = () => {
+    toast.success("Successfully used the example form!");
     form.reset();
 
     return;
@@ -163,8 +145,8 @@ const CreateAspenForm = () => {
 
   useEffect(() => {
     (async () => {
-      isFetching(true)
       setSuggestions([]);
+      isFetching(true);
       if (debouncedQuery.length > 0) {
         const res = await fetch(
           `/api/sugar/aspen/findAspenOffice?officeName=${debouncedQuery}`,
@@ -180,7 +162,7 @@ const CreateAspenForm = () => {
 
         const data = (await res.json()) as SugarOffice[];
 
-        isFetching(false)
+        isFetching(false);
         setSuggestions(data);
         return;
       }
@@ -342,7 +324,7 @@ const CreateAspenForm = () => {
           </Collapsible>
         </section>
 
-        <Button disabled={buttonDisabled} className="m-auto flex" type="submit">
+        <Button className="m-auto flex" type="submit">
           Submit
         </Button>
 
@@ -400,4 +382,4 @@ const CreateAspenForm = () => {
   );
 };
 
-export { CreateAspenForm };
+export { ExampleForm };

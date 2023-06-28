@@ -23,6 +23,7 @@ import {
 import type { SugarOffice } from "@/types/sugar";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import Head from "next/head";
 
 type CardProps = {
   orderNumber: string;
@@ -71,6 +72,7 @@ const Cards = ({ ...props }: CardProps) => {
           <CardTitle>
             <Link
               target="_blank"
+              className="hover:underline"
               href={`https://abode.ordoro.com/label?$order=1-${
                 props.orderNumber ?? ""
               }&docs=shippinglabel&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true`}
@@ -81,6 +83,7 @@ const Cards = ({ ...props }: CardProps) => {
           <CardDescription>
             <Link
               target="_blank"
+              className="hover:underline"
               href={`https://oralid.myshopify.com/admin/orders/${
                 props.shopifyLink ?? ""
               }`}
@@ -150,35 +153,41 @@ const FulfillPage = ({
   shopifyOrders: ShopifyResponseType[];
 }) => {
   return (
-    <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
-      <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Shopify</h1>
-      <div className="mx-auto my-3 flex flex-row items-center justify-center gap-3">
-        {ordoroShopifyOrders.length > 0 ? (
-          ordoroShopifyOrders.map((order) => {
-            const matchingShopifyOrder = shopifyOrders.find(
-              (shopifyOrder) =>
-                (shopifyOrder.order_number as unknown as string) ==
-                order?.order_number?.slice(2)
-            );
-            return (
-              <Orders
-                key={order.order_number}
-                order={order}
-                shopify={
-                  matchingShopifyOrder ?? ([] as unknown as ShopifyResponseType)
-                }
-              />
-            );
-          })
-        ) : (
-          <div>
-            <span className="mx-auto flex items-center justify-center text-center font-light italic text-gray-400">
-              No orders to fulfill!
-            </span>
-          </div>
-        )}
-      </div>
-    </main>
+    <>
+      <Head>
+        <title>Forward Science Automation | Fulfill Shopify Orders</title>
+      </Head>
+      <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
+        <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Shopify</h1>
+        <div className="mx-auto my-3 flex flex-row items-center justify-center gap-3">
+          {ordoroShopifyOrders.length > 0 ? (
+            ordoroShopifyOrders.map((order) => {
+              const matchingShopifyOrder = shopifyOrders.find(
+                (shopifyOrder) =>
+                  (shopifyOrder.order_number as unknown as string) ==
+                  order?.order_number?.slice(2)
+              );
+              return (
+                <Orders
+                  key={order.order_number}
+                  order={order}
+                  shopify={
+                    matchingShopifyOrder ??
+                    ([] as unknown as ShopifyResponseType)
+                  }
+                />
+              );
+            })
+          ) : (
+            <div>
+              <span className="mx-auto flex items-center justify-center text-center font-light italic text-gray-400">
+                No orders to fulfill!
+              </span>
+            </div>
+          )}
+        </div>
+      </main>
+    </>
   );
 };
 
@@ -253,9 +262,6 @@ const Orders = ({
   const handleRetrieveSugarOfficeClick = async () => {
     isProcessing(true);
     const { company, address1: address, phone } = shopify.shipping_address;
-    // const company = "Forward Science";
-    // const address = "10810 Craighead Dr";
-    // const phone = "8556967254";
 
     const formattedPhone = phone?.replace(/\D/g, "");
     const formattedPhoneTwo = formattedPhone?.replace(
@@ -296,19 +302,21 @@ const Orders = ({
     return;
   };
 
+  const price = shopify.total_price;
+  console.log(shopify.order_number, price);
+
   const handleAddToSugarClick = async (id: string) => {
     try {
       offices.length = 0;
       isProcessing(true);
 
-      const productDescription = order?.lines
-        .map((item) => {
+      const productDescription = order
+        ?.lines!!.map((item) => {
           return `${item?.quantity ?? 0} x ${item?.product_name ?? ""}`;
         })
         .join("\n");
 
-      const price =
-        shopify.total_price - shopify.total_tax - shopify.total_discounts;
+      const price = shopify.total_price;
 
       const res = await fetch("/api/sugar/shopify/createShipLog", {
         method: "POST",
@@ -340,69 +348,71 @@ const Orders = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="flex flex-row items-center justify-center">
-        <Cards
-          orderNumber={
-            order.order_number?.slice(2) ?? "Couldn't find Order Number"
-          }
-          ambassador={ambassador}
-          npi={npi}
-          orderContents={order.lines?.map((line) => (
-            <li className="mx-2" key={line.link}>
-              {line.quantity ?? 0} x {line.product_name ?? ""}
-            </li>
-          ))}
-          price={
-            order.lines?.reduce((acc, line) => {
-              return acc + (line.quantity ?? 0) * (line.item_price ?? 0);
-            }, 0) ?? 0
-          }
-          shopifyLink={shopify.id}
-          processing={processing}
-          buttonText={
-            !processing && tracking === "" ? "Create Label" : "Add to Sugar"
-          }
-          complete={!processing && complete && offices.length == 0}
-          fulfillHandler={createLabel}
-          addToSugarHandler={handleRetrieveSugarOfficeClick}
-        />
-      </div>
-      <div>
-        {offices.length >= 0 ? (
-          <Modal
-            isVisible={showModal}
-            title={order.order_number ?? ""}
-            offices={offices.map((office) => {
-              return (
-                <div key={office.id} className="flex flex-col">
-                  <button
-                    onClick={() => setSelectedOffice(office.id)}
-                    className="inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
-                  >
-                    <ul className="ml-2 list-disc p-2 text-left">
-                      <li key={office.name}>Office: {office.name}</li>
-                      <li key={office.shipping_address_street}>
-                        Address: {office.shipping_address_street}
-                      </li>
-                      <li key={office.phone_office}>
-                        Phone: {office.phone_office}
-                      </li>
-                    </ul>
-                  </button>
-                </div>
-              );
-            })}
-            accept={() => {
-              setShowModal(false);
-              handleAddToSugarClick(selectedOffice).catch((err) =>
-                console.error(err)
-              );
-            }}
-            close={() => setShowModal(false)}
+    <>
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-row items-center justify-center">
+          <Cards
+            orderNumber={
+              order.order_number?.slice(2) ?? "Couldn't find Order Number"
+            }
+            ambassador={ambassador}
+            npi={npi}
+            orderContents={order.lines?.map((line) => (
+              <li className="mx-2" key={line.link}>
+                {line.quantity ?? 0} x {line.product_name ?? ""}
+              </li>
+            ))}
+            price={
+              order.lines?.reduce((acc, line) => {
+                return acc + (line.quantity ?? 0) * (line.item_price ?? 0);
+              }, 0) ?? 0
+            }
+            shopifyLink={shopify.id}
+            processing={processing}
+            buttonText={
+              !processing && tracking === "" ? "Create Label" : "Add to Sugar"
+            }
+            complete={!processing && complete && offices.length == 0}
+            fulfillHandler={createLabel}
+            addToSugarHandler={handleRetrieveSugarOfficeClick}
           />
-        ) : null}
+        </div>
+        <div>
+          {offices.length >= 0 ? (
+            <Modal
+              isVisible={showModal}
+              title={order.order_number ?? ""}
+              offices={offices.map((office) => {
+                return (
+                  <div key={office.id} className="flex flex-col">
+                    <button
+                      onClick={() => setSelectedOffice(office.id)}
+                      className="inline-flex items-center rounded-lg px-3 py-2 text-center text-sm font-medium hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-gray-700 dark:text-white"
+                    >
+                      <ul className="ml-2 list-disc p-2 text-left">
+                        <li key={office.name}>Office: {office.name}</li>
+                        <li key={office.shipping_address_street}>
+                          Address: {office.shipping_address_street}
+                        </li>
+                        <li key={office.phone_office}>
+                          Phone: {office.phone_office}
+                        </li>
+                      </ul>
+                    </button>
+                  </div>
+                );
+              })}
+              accept={() => {
+                setShowModal(false);
+                handleAddToSugarClick(selectedOffice).catch((err) =>
+                  console.error(err)
+                );
+              }}
+              close={() => setShowModal(false)}
+            />
+          ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 };

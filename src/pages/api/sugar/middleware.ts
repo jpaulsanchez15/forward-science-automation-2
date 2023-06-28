@@ -13,7 +13,12 @@ const sugarMiddleware = (
   handler: (
     req: NextApiRequestWithSugarToken,
     res: NextApiResponse
-  ) => Promise<void> | string | undefined
+  ) =>
+    | Promise<void>
+    | string
+    | undefined
+    | Promise<"Not PPL" | undefined>
+    | void
 ) => {
   return async (req: NextApiRequestWithSugarToken, res: NextApiResponse) => {
     try {

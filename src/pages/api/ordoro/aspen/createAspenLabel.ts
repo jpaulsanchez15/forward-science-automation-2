@@ -35,28 +35,32 @@ const createAspenLabel = async (req: AspenOrderBody, res: NextApiResponse) => {
       return;
     }
 
-    if (!createLabelRes.ok) {
-      res.status(500).json({ message: "Something went wrong" });
+    const data = (await createLabelRes.json()) as OrdoroLabelResponseType;
+
+    if (data.error_message) {
+      res.status(500).json({ message: data.error_message });
       return;
     }
 
-    const data = (await createLabelRes.json()) as OrdoroLabelResponseType;
+    if (data && data.tracking_number) {
+      const updatedOrder = await prisma.aspenOrder.update({
+        where: {
+          orderNumber: req.body.num.slice(18),
+        },
+        data: {
+          trackingNumber: data?.tracking_number,
+          orderNumber: req.body.num.slice(18),
+        },
+      });
 
-    const updatedOrder = await prisma.aspenOrder.update({
-      where: {
-        orderNumber: req.body.num.slice(18),
-      },
-      data: {
-        trackingNumber: data.tracking_number,
-        orderNumber: req.body.num.slice(18),
-      },
-    });
-
-    res.status(201).json({
-      order: updatedOrder,
-      message: "Tracking added to DB",
-      data: data,
-    });
+      res.status(201).json({
+        order: updatedOrder,
+        message: "Tracking added to DB",
+        data: data,
+      });
+    } else {
+      res.status(500).json({ message: "Custom error message" });
+    }
 
     // RETURN TRACKING NUMBER
     return;

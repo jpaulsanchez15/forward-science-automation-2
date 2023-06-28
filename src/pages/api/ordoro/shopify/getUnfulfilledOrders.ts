@@ -30,18 +30,21 @@ const getUnfullfiledOrders = async (
         },
       }
     );
-    const data = (await response.json()) as unknown;
+    const data = (await response.json()) as any;
 
-    res.status(200).json(
-      data.order.sort((a, b) =>
-        a.order_number > b.order_number
-          ? -1
-          : b.order_number > a.order_number
-          ? 1
-          : 0
-      )
-      // .filter((order) => order?.order_number.startsWith("1-"))
-    );
+    res
+      .status(200)
+      .json(
+        data.order
+          .sort((a: any, b: any) =>
+            a.order_number > b.order_number
+              ? -1
+              : b.order_number > a.order_number
+              ? 1
+              : 0
+          )
+          .filter((order: any) => order?.order_number.startsWith("1-"))
+      );
 
     return data;
   }
