@@ -37,7 +37,9 @@ const createAspenLabel = async (req: AspenOrderBody, res: NextApiResponse) => {
 
     const data = (await createLabelRes.json()) as OrdoroLabelResponseType;
 
+    //@ts-ignore
     if (data.error_message) {
+      //@ts-ignore
       res.status(500).json({ message: data.error_message });
       return;
     }

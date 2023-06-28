@@ -261,7 +261,14 @@ const Orders = ({
 
       const labelCreatedResponse = (await labelCreated.json()) as OrdoroLabel;
 
-      if (labelCreatedResponse.message == "Error 3050: Invalid Recipient Postal Code Format") throw new Error("Zip code is incorrect. Please go to the order in Ordoro and fix it, then go to Sugar and fix the zip code.")
+      if (
+        //@ts-ignore
+        labelCreatedResponse.message ==
+        "Error 3050: Invalid Recipient Postal Code Format"
+      )
+        throw new Error(
+          "Zip code is incorrect. Please go to the order in Ordoro and fix it, then go to Sugar and fix the zip code."
+        );
 
       const shipLogItemsMap = order.lines.map((line) => {
         return {
@@ -314,7 +321,7 @@ const Orders = ({
       );
       return labelCreatedResponse;
     } catch (error) {
-      toast.error(error);
+      if (error instanceof Error) toast.error(error.message);
       setHandleLoading(false);
       return;
     } finally {
