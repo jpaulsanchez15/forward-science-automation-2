@@ -103,6 +103,14 @@
       "lb": 32
     }
   },
+  "FS-84": {
+    "dimensions": {
+      "length": 9,
+      "width": 6,
+      "height": 5,
+      "lb": 32
+    }
+  },
   "FS-11": {
     "dimensions": {
       "length": 14,
