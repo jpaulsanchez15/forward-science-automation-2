@@ -51,8 +51,12 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
           ) : null}
         </CardHeader>
         <CardContent>
-          <ul className="flex flex-col">{props.orderContents}</ul>
-          <p>Total: ${props.orderPrice}</p>
+          <ul className="m-auto mb-4 flex w-full flex-col items-center justify-center text-center">
+            {props.orderContents}
+          </ul>
+          <p className="flex flex-col text-center">
+            Total: ${props.orderPrice}
+          </p>
         </CardContent>
         {!props.completed ? (
           <div className="m-auto mb-4 flex flex-col items-center justify-center">
@@ -114,7 +118,7 @@ const FulfillPage: NextPage = () => {
       </Head>
       <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
         <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
-        <div className="mx-auto my-3 flex flex-row items-center justify-center gap-3">
+        <div className="mx-4 my-3 grid grid-cols-5 items-center justify-center gap-2">
           {data.length > 0 ? (
             data
               ?.sort((a, b) =>
@@ -145,10 +149,7 @@ const FulfillPage: NextPage = () => {
                   <div className="hidden sm:mb-8 sm:flex sm:justify-center">
                     <div className="hover:bg-vanilla relative rounded-full bg-white px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:bg-gray-400 hover:ring-gray-900/20 dark:bg-white dark:text-black dark:hover:bg-gray-400">
                       Need to create more orders?{" "}
-                      <Link
-                        href="/aspen/create"
-                        className="text-coral-pink font-semibold"
-                      >
+                      <Link href="/aspen/create" className="font-semibold">
                         <span className="absolute inset-0" aria-hidden="true" />
                         <span aria-hidden="true">&rarr;</span>
                       </Link>
