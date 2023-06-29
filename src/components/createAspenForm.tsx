@@ -32,7 +32,7 @@ import Link from "next/link";
 
 //TODO: Find other accessories that I need to put in here.
 type Accessories = {
-  name: "fs84" | "fs88" | "fs08";
+  name: "fs84" | "fs88" | "fs08" | "fs760" | "fs03" | "fs701";
 }[];
 
 type Products = {
@@ -43,6 +43,9 @@ const accessories: Accessories = [
   { name: "fs84" },
   { name: "fs88" },
   { name: "fs08" },
+  { name: "fs760" },
+  { name: "fs03" },
+  { name: "fs701" },
 ];
 
 const products: Products = [
@@ -79,6 +82,9 @@ const formSchema = z.object({
       fs88: z.number().optional(),
       fs84: z.number().optional(),
       fs08: z.number().optional(),
+      fs760: z.number().optional(),
+      fs03: z.number().optional(),
+      fs701: z.number().optional(),
     }),
   }),
   price: z.number().min(1, {
@@ -106,6 +112,9 @@ const CreateAspenForm = () => {
           fs88: 0,
           fs84: 0,
           fs08: 0,
+          fs760: 0,
+          fs03: 0,
+          fs701: 0,
         },
       },
       price: 0,
@@ -144,7 +153,15 @@ const CreateAspenForm = () => {
       salivaMax = 0,
       oxiStom = 0,
       oralID = 0,
-      accessories: { fs84 = 0, fs88 = 0, fs08 = 0 } = {},
+      // could spread here but idk
+      accessories: {
+        fs84 = 0,
+        fs88 = 0,
+        fs08 = 0,
+        fs760 = 0,
+        fs03 = 0,
+        fs701 = 0,
+      } = {},
     } = form.watch("products");
 
     const price =
@@ -154,7 +171,10 @@ const CreateAspenForm = () => {
       oralID * 1200 +
       fs84 * 20 +
       fs88 * 20 +
-      fs08 * 125;
+      fs08 * 125 +
+      fs760 * 10 +
+      fs03 * 40 +
+      fs701 * 110;
 
     form.setValue("price", price);
   };
@@ -163,7 +183,7 @@ const CreateAspenForm = () => {
 
   useEffect(() => {
     (async () => {
-      isFetching(true)
+      isFetching(true);
       setSuggestions([]);
       if (debouncedQuery.length > 0) {
         const res = await fetch(
@@ -180,7 +200,7 @@ const CreateAspenForm = () => {
 
         const data = (await res.json()) as SugarOffice[];
 
-        isFetching(false)
+        isFetching(false);
         setSuggestions(data);
         return;
       }

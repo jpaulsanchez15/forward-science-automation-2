@@ -100,7 +100,17 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       SalivaMax: "SalivaMAX® 10 pk of 30 ct boxes",
       OralID: "OralID Kit (FS-11) Default Title",
       // TODO: Expand on this so it matches what we did earlier.
-      accessories: "Customized Shipment",
+      "Laminated Progression Sheets (4) (FS-760)":
+        "Laminated Progression Sheets (4) (FS-760)",
+      "18 Pack CR123A Batteries (FS-03) Default Title":
+        "18 Pack CR123A Batteries (FS-03) Default Title",
+      "Fitted Glasses (FS-08) Default Title":
+        "Fitted Glasses (FS-08) Default Title",
+      "Over Glasses (FS-701)": "Over Glasses (FS-701)",
+      "'PG' Oral Cancer Brochures (FS-88) Default Title":
+        "'PG' Oral Cancer Brochures (FS-88) Default Title",
+      "Sex, Drugs & Oral Cancer Brochures (FS-84) Default Title":
+        "Sex, Drugs & Oral Cancer Brochures (FS-84) Default Title",
     };
 
     const priceMap = {
@@ -108,7 +118,12 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       OxiStom: 25.5,
       SalivaMax: 110,
       OralID: 995,
-      accessories: 0,
+      "Laminated Progression Sheets (4) (FS-760)": 10,
+      "18 Pack CR123A Batteries (FS-03) Default Title": 40,
+      "Sex, Drugs & Oral Cancer Brochures (FS-84) Default Title": 10,
+      "Fitted Glasses (FS-08) Default Title": 125,
+      "Over Glasses (FS-701)": 125,
+      "'PG' Oral Cancer Brochures (FS-88) Default Title": 10,
     };
 
     const productArray = order.lines
@@ -147,7 +162,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     });
 
     const ordoroData = (await response.json()) as OrdoroOrder;
-    console.log(ordoroData);
 
     const updatedOrder = await prisma.aspenOrder.update({
       where: {

@@ -288,7 +288,11 @@ const Orders = ({
         },
         { name: "FS-88", value: shipLogItemsMap[4]?.value },
         { name: "FS-84", value: shipLogItemsMap[5]?.value },
+        { name: "FS-760", value: shipLogItemsMap[6]?.value },
+        { name: "FS-03", value: shipLogItemsMap[7]?.value },
+        { name: "FS-701", value: shipLogItemsMap[8]?.value },
       ];
+
       const listItemString = shipLogItems
         .filter((item) => item?.value ?? 0 > 0)
         .map((item) => {

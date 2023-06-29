@@ -228,6 +228,17 @@ const FAQ = () => {
             </ul>
           </li>
           <li>
+            I don't see the accessory listed on the PO.
+            <ul className="my-6 ml-6 w-full  list-disc  [&>li]:mt-2">
+              <li>
+                It hasn't been added yet. Please let me know and I will add it.
+                In the meantime, you can process it manually or use another one
+                of the accessories and just change the information in the
+                ShipLog later.
+              </li>
+            </ul>
+          </li>
+          <li>
             All other bugs can be reported in Asana,{" "}
             <Link
               target="_blank"

@@ -44,6 +44,9 @@ export const aspenRouter = createTRPCRouter({
           accessories: z.object({
             fs88: z.number().optional(),
             fs84: z.number().optional(),
+            fs760: z.number().optional(),
+            fs03: z.number().optional(),
+            fs701: z.number().optional(),
           }),
         }),
         price: z.number(),
@@ -85,16 +88,35 @@ export const aspenRouter = createTRPCRouter({
                 price: (input.products.oralID?.valueOf() ?? 0) * 1200,
               },
               {
-                productName: "FS88",
+                productName: "'PG' Oral Cancer Brochures (FS-88) Default Title",
                 sku: "FS-88",
                 quantity: input.products.accessories.fs88 || 0,
                 price: (input.products.accessories.fs88 ?? 0) * 20,
               },
               {
-                productName: "FS84",
+                productName:
+                  "Sex, Drugs & Oral Cancer Brochures (FS-84) Default Title",
                 sku: "FS-84",
                 quantity: input.products.accessories.fs84 || 0,
                 price: (input.products.accessories.fs84 ?? 0) * 20,
+              },
+              {
+                productName: "Laminated Progression Sheets (4) (FS-760)",
+                sku: "31497175334973",
+                quantity: input.products.accessories.fs760 || 0,
+                price: (input.products.accessories.fs760 ?? 0) * 20,
+              },
+              {
+                productName: "Over Glasses (FS-701)",
+                sku: "FS-701",
+                quantity: input.products.accessories.fs701 || 0,
+                price: (input.products.accessories.fs701 ?? 0) * 125,
+              },
+              {
+                productName: "18 Pack CR123A Batteries (FS-03) Default Title",
+                sku: "FS-03",
+                quantity: input.products.accessories.fs03 || 0,
+                price: (input.products.accessories.fs03 ?? 0) * 60,
               },
             ],
           },

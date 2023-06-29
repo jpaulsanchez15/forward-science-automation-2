@@ -59,10 +59,22 @@ const Home = () => {
         </h1>
 
         <CardsList />
-        <section className="mt-24">
+        <section className="mt-24 w-1/3">
           <h2 className="mt-12 scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight transition-colors first:mt-0">
             Changelog
           </h2>
+          <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.0.5</span> - Added more
+              accessory support. It is still recommended to only add 1 total
+              accessory since the quantity is still messed up and prints one for
+              each accessory added. Fix in progress. Please advise the{" "}
+              <Link href="/aspen/faq">
+                <span className="text-blue-600 underline">FAQ</span>
+              </Link>{" "}
+              for any questions. - 6/29/23
+            </li>
+          </ul>
           <ul className="mt-4 space-y-2">
             <li>
               <span className="font-semibold">v1.0.0</span> - Initial release -
