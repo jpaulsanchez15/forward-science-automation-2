@@ -118,7 +118,13 @@ const FulfillPage: NextPage = () => {
       </Head>
       <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
         <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
-        <div className="mx-4 my-3 grid grid-cols-5 items-center justify-center gap-2">
+        <div
+          className={
+            data.length > 0
+              ? `mx-4 my-3 grid grid-cols-5 items-center justify-center gap-2`
+              : `mx-auto flex items-center justify-center text-center`
+          }
+        >
           {data.length > 0 ? (
             data
               ?.sort((a, b) =>
@@ -141,7 +147,7 @@ const FulfillPage: NextPage = () => {
               })
           ) : (
             <div>
-              <span className="mx-auto flex items-center justify-center text-center font-light italic text-gray-400">
+              <span className="font-light italic text-gray-400">
                 No orders to fulfill!
               </span>
               <div>
@@ -348,6 +354,15 @@ const Orders = ({
       fileAway: true,
     });
   };
+
+  console.log(
+    order.lines
+      .reduce(
+        (acc, line) => acc + Number(line.quantity) * Number(line.price),
+        0
+      )
+      .toFixed(2) ?? null
+  );
 
   return (
     <Cards
