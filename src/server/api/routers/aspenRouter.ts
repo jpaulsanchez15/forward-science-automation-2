@@ -79,7 +79,7 @@ export const aspenRouter = createTRPCRouter({
                 productName: "SalivaMax",
                 sku: "42029121142953",
                 quantity: input.products.salivaMax || 0,
-                price: (input.products.salivaMax?.valueOf() ?? 0) * 120,
+                price: (input.products.salivaMax?.valueOf() ?? 0) * 110,
               },
               {
                 productName: "OralID",
