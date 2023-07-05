@@ -166,7 +166,7 @@ const CreateAspenForm = () => {
 
     const price =
       theraStom * 63 +
-      salivaMax * 120 +
+      salivaMax * 110 +
       oxiStom * 25.5 +
       oralID * 1200 +
       fs84 * 20 +
