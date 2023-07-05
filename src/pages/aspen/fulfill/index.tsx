@@ -17,8 +17,8 @@ import type { SugarOffice } from "@/types/sugar";
 import type { GetOrdersType } from "@/types/trpc";
 import { api } from "@/utils/api";
 import { formatAspenOrder } from "@/utils/ordoro";
-import toast from "react-hot-toast";
 import Head from "next/head";
+import toast from "react-hot-toast";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
@@ -318,12 +318,7 @@ const Orders = ({
           name: labelCreatedResponse.data?.tracking_number,
           order_no: order.orderNumber,
           product_sales_total_c:
-            order.lines
-              .reduce(
-                (acc, line) => acc + Number(line.quantity) * Number(line.price),
-                0
-              )
-              .toFixed(2) ?? null,
+            order.lines.reduce((acc, line) => acc + Number(line.price), 0) ?? 0,
         }),
       });
       await shipLog.json();
@@ -355,15 +350,6 @@ const Orders = ({
     });
   };
 
-  console.log(
-    order.lines
-      .reduce(
-        (acc, line) => acc + Number(line.quantity) * Number(line.price),
-        0
-      )
-      .toFixed(2) ?? null
-  );
-
   return (
     <Cards
       orderNumber={order.orderNumber}
@@ -377,12 +363,7 @@ const Orders = ({
           );
         })}
       orderPrice={
-        order.lines
-          .reduce(
-            (acc, line) => acc + Number(line.quantity) * Number(line.price),
-            0
-          )
-          .toFixed(2) ?? null
+        order.lines.reduce((acc, line) => acc + Number(line.price), 0) ?? 0
       }
       officeName={order.officeName}
       madeBy={order.createdBy}

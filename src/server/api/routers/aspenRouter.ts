@@ -67,7 +67,7 @@ export const aspenRouter = createTRPCRouter({
                 productName: "TheraStom",
                 sku: "TS-16-12",
                 quantity: input.products.theraStom || 0,
-                price: (input.products.theraStom?.valueOf() ?? 0) * 63,
+                price: (input.products.theraStom ?? 0) * 63,
               },
               {
                 productName: "OxiStom",
