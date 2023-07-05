@@ -1,8 +1,8 @@
 import Head from "next/head";
 
 import { Cards } from "@/components/cards";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const cardInfo = [
@@ -64,6 +64,15 @@ const Home = () => {
             Changelog
           </h2>
           <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.1.0</span> - Fixed a bug where
+              the pricing was incorrect in the ESL and the visual on the
+              application. Thank you,{" "}
+              <span className="font-semibold">@Kionna</span> for finding that
+              and bringing it up! I am looking into the other changes at the
+              moment with the dates and what not. I appreciate yall&apos;s
+              feedback! - 7/04/23
+            </li>
             <li>
               <span className="font-semibold">v1.0.5</span> - Added more
               accessory support. It is still recommended to only add 1 total

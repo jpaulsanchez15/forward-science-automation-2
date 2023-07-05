@@ -1,7 +1,7 @@
 export type AspenFulfillCardProps = {
   orderNumber: string | null;
   orderContents: string | JSX.Element[] | JSX.Element | null;
-  orderPrice: string | null;
+  orderPrice: string | number | null;
   officeName: string | null;
   madeBy: string | null;
   buttonText?: string;

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import toast from "react-hot-toast";
 import { debounceValue } from "@/utils/debounceQuery";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import * as z from "zod";
 
 import {
   Collapsible,
@@ -23,12 +23,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { api } from "@/utils/api";
-import { useEffect, useState } from "react";
-import { ChevronDown } from "lucide-react";
 import type { SugarOffice } from "@/types/sugar";
+import { api } from "@/utils/api";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 //TODO: Find other accessories that I need to put in here.
 type Accessories = {
@@ -397,6 +397,7 @@ const CreateAspenForm = () => {
               return (
                 <Button
                   type="button"
+                  className="h-full w-full"
                   onClick={() => {
                     toast.success(`Selected Office Name: ${suggestion.name}`, {
                       position: "bottom-center",
@@ -409,7 +410,13 @@ const CreateAspenForm = () => {
                   }}
                   key={suggestion.id}
                 >
-                  {suggestion.name}
+                  <ul>
+                    <li>Name: {suggestion.name}</li>
+                    <li>Street: {suggestion.shipping_address_street}</li>
+                    <li>City: {suggestion.shipping_address_city}</li>
+                    <li>State: {suggestion.shipping_address_state}</li>
+                    <li>Zip: {suggestion.shipping_address_postalcode}</li>
+                  </ul>
                 </Button>
               );
             })}
