@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
+  message: string;
 };
 
 const Cards = ({ ...props }: AspenFulfillCardProps) => {
@@ -64,7 +65,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
               disabled={props.disabled}
               className={
                 props.buttonText === "1. Create Order"
-                  ? `bg-white hover:bg-gray-400`
+                  ? `bg-black hover:bg-gray-400 dark:bg-white dark:hover:bg-gray-400`
                   : `bg-green-400 hover:bg-green-500`
               }
               onClick={props.handler}
@@ -239,7 +240,7 @@ const Orders = ({
     setHandleLoading(true);
 
     try {
-      const label = await formatAspenOrder(order.lines);
+      const label = formatAspenOrder(order.lines);
 
       const sugarOffice = await fetch(
         `/api/sugar/aspen/findAspenOffice?officeName=${order.officeName ?? ""}`,
@@ -269,7 +270,6 @@ const Orders = ({
       const labelCreatedResponse = (await labelCreated.json()) as OrdoroLabel;
 
       if (
-        //@ts-ignore
         labelCreatedResponse.message ==
         "Error 3050: Invalid Recipient Postal Code Format"
       )

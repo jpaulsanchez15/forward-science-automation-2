@@ -313,7 +313,7 @@ const Orders = ({
       isProcessing(true);
 
       const productDescription = order
-        ?.lines!!.map((item) => {
+        ?.lines!.map((item) => {
           return `${item?.quantity ?? 0} x ${item?.product_name ?? ""}`;
         })
         .join("\n");
