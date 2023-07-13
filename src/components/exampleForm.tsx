@@ -3,7 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 import { debounceValue } from "@/utils/debounceQuery";
 
 import {
@@ -90,6 +90,8 @@ const ExampleForm = () => {
   const [fetching, isFetching] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<SugarOffice[]>([]);
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -113,7 +115,10 @@ const ExampleForm = () => {
   });
 
   const onSubmit = () => {
-    toast.success("Successfully used the example form!");
+    toast({
+      description: "Successfully used the example form!",
+      variant: "success",
+    });
     form.reset();
 
     return;
@@ -360,9 +365,9 @@ const ExampleForm = () => {
                 <Button
                   type="button"
                   onClick={() => {
-                    toast.success(`Selected Office Name: ${suggestion.name}`, {
-                      position: "bottom-center",
-                      duration: 5000,
+                    toast({
+                      description: `Selected Office Name: ${suggestion.name}`,
+                      variant: "success",
                     });
                     form.setValue("officeName", suggestion.name);
                     form.setValue("officeId", suggestion.id);

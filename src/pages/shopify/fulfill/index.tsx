@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { SugarOffice } from "@/types/sugar";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 import Head from "next/head";
 
 type CardProps = {
@@ -222,6 +222,8 @@ const Orders = ({
   const { note } = shopify.customer ?? "";
   const npi = /\d/.test(note ?? "");
 
+  const { toast } = useToast();
+
   const createLabel = async () => {
     try {
       isProcessing(true);
@@ -253,12 +255,15 @@ const Orders = ({
 
       const data = (await res.json()) as OrdoroLabelResponseType;
 
-      toast.success("Successfully created label!");
+      toast({ description: "Successfully created label!", variant: "success" });
       setTracking(data.tracking_number);
       return data;
     } catch (err) {
       isProcessing(false);
-      toast.error("Something went wrong making the label...");
+      toast({
+        description: "Something went wrong making the label...",
+        variant: "destructive",
+      });
     } finally {
       isProcessing(false);
     }
@@ -294,7 +299,7 @@ const Orders = ({
         setShowModal(true);
       } else {
         setOffices([]);
-        toast.error("No offices found!");
+        toast({ description: "No offices found!", variant: "destructive" });
         isProcessing(false);
         setShowModal(false);
       }
@@ -337,12 +342,18 @@ const Orders = ({
 
       const data = (await res.json()) as unknown;
 
-      toast.success("Successfully added to SugarCRM");
+      toast({
+        description: "Successfully added to SugarCRM",
+        variant: "success",
+      });
       isComplete(true);
 
       return data;
     } catch (err) {
-      toast.error("Error adding to SugarCRM");
+      toast({
+        description: "Error adding to SugarCRM",
+        variant: "destructive",
+      });
       isProcessing(false);
     } finally {
       isProcessing(false);
