@@ -336,6 +336,7 @@ const Orders = ({
           name: tracking.toString(),
           order_no: order.order_number?.slice(2),
           product_sales_total_c: price.toString(),
+          date_ordered_c: shopify.created_at,
           ambassador,
         }),
       });

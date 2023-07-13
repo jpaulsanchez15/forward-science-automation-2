@@ -144,12 +144,14 @@ const FAQ = () => {
         <h2 className="mb-12 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
           How to use this tool
         </h2>
+
         <div>
           <ExampleForm />
         </div>
         <div className="leading-7 [&:not(:first-child)]:mt-6">
           <ExampleCards />
         </div>
+
         <blockquote className="mt-6 border-l-2 pl-6 italic">
           Hover over each part of the card above to see what it is and what they
           mean.
