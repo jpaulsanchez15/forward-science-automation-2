@@ -18,7 +18,7 @@ import type { GetOrdersType } from "@/types/trpc";
 import { api } from "@/utils/api";
 import { formatAspenOrder } from "@/utils/ordoro";
 import Head from "next/head";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
@@ -38,7 +38,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
           <CardTitle>Order Number: {props.orderNumber}</CardTitle>
           <CardDescription>{props.madeBy}</CardDescription>
           <CardDescription>For: {props.officeName}</CardDescription>
-          {props.ordoroLink !== "" ? (
+          {props.ordoroLink !== "" && props.completed ? (
             <CardDescription className="font-bold text-green-400 underline hover:cursor-pointer hover:text-green-600">
               <Link
                 target="_blank"
@@ -185,23 +185,31 @@ const Orders = ({
   isDisabled: (disabled: boolean) => void;
 }) => {
   const [handleLoading, setHandleLoading] = useState(false);
+  const { toast } = useToast();
   const deletedOrder = api.aspenOrder.deleteOrder.useMutation({
     onSuccess: () => {
-      toast.success("Order deleted!");
+      toast({
+        description:
+          "Order deleted! Please ensure you delete the items in Ordoro and Sugar if you made it that far.",
+        variant: "success",
+      });
       refetch().catch(console.error);
     },
     onError: () => {
-      toast.error("Error deleting order!");
+      toast({ description: "Error deleting order!", variant: "destructive" });
     },
   });
 
   const fileAwayOrder = api.aspenOrder.completeOrder.useMutation({
     onSuccess: () => {
-      toast.success("Order filed away!");
+      toast({ description: "Order filed away!", variant: "success" });
       refetch().catch(console.error);
     },
     onError: () => {
-      toast.error("Error filing away order!");
+      toast({
+        description: "Error filing away order!",
+        variant: "destructive",
+      });
     },
   });
 
@@ -222,11 +230,17 @@ const Orders = ({
       });
 
       const data = (await res.json()) as OrdoroOrder;
-      toast.success(`PO-${order.orderNumber ?? "Unknown PO Number"} created!`);
+      toast({
+        description: `PO-${order.orderNumber ?? "Unknown PO Number"} created!`,
+        variant: "success",
+      });
       refetch().catch(console.error);
       return data;
     } catch (error) {
-      toast.error("Error creating order! Try again in a few seconds.");
+      toast({
+        description: "Error creating order! Try again in a few seconds.",
+        variant: "destructive",
+      });
       setHandleLoading(false);
       return;
     } finally {
@@ -236,7 +250,6 @@ const Orders = ({
   };
 
   const handleCreateLabel = async () => {
-    console.log("Creating label...");
     setHandleLoading(true);
 
     try {
@@ -266,6 +279,12 @@ const Orders = ({
           lines: label,
         }),
       });
+
+      if (labelCreated.status === 404) {
+        throw new Error(
+          "Please try again in a few seconds. Ordoro hasn't recognized this has been created."
+        );
+      }
 
       const labelCreatedResponse = (await labelCreated.json()) as OrdoroLabel;
 
@@ -319,15 +338,20 @@ const Orders = ({
           order_no: order.orderNumber,
           product_sales_total_c:
             order.lines.reduce((acc, line) => acc + Number(line.price), 0) ?? 0,
+          date_ordered_c: order.createdAt?.toISOString(),
         }),
       });
       await shipLog.json();
-      toast.success(
-        `PO-${order.orderNumber ?? "Unknown PO Number"}'s label created!`
-      );
+      toast({
+        variant: "success",
+        description: `PO-${
+          order.orderNumber ?? "Unknown PO Number"
+        }'s label created!`,
+      });
       return labelCreatedResponse;
     } catch (error) {
-      if (error instanceof Error) toast.error(error.message);
+      if (error instanceof Error)
+        toast({ description: error.message, variant: "destructive" });
       setHandleLoading(false);
       return;
     } finally {

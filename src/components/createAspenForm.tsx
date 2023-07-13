@@ -3,8 +3,14 @@
 
 import { debounceValue } from "@/utils/debounceQuery";
 import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import {
   Collapsible,
@@ -25,14 +31,21 @@ import {
 import { Input } from "@/components/ui/input";
 import type { SugarOffice } from "@/types/sugar";
 import { api } from "@/utils/api";
-import { ChevronDown } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Calendar } from "./ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 //TODO: Find other accessories that I need to put in here.
+//TODO: Add FS864, FS866, FS867
 type Accessories = {
   name: "fs84" | "fs88" | "fs08" | "fs760" | "fs03" | "fs701";
+  // | "fs864"
+  // | "fs866"
+  // | "fs867";
 }[];
 
 type Products = {
@@ -73,6 +86,9 @@ const formSchema = z.object({
   officeId: z.string().min(1, {
     message: "You need to provide an office name!",
   }),
+  dateOrdered: z.date({
+    required_error: "A date of birth is required.",
+  }),
   products: z.object({
     theraStom: z.number().optional(),
     oxiStom: z.number().optional(),
@@ -97,12 +113,15 @@ const CreateAspenForm = () => {
   const [fetching, isFetching] = useState<boolean>(false);
   const [suggestions, setSuggestions] = useState<SugarOffice[]>([]);
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       orderNumber: "",
       officeName: "",
       officeId: "",
+      dateOrdered: new Date(),
       products: {
         theraStom: 0,
         oxiStom: 0,
@@ -125,13 +144,17 @@ const CreateAspenForm = () => {
   const { isLoading: buttonDisabled, mutateAsync } =
     api.aspenOrder.createOrder.useMutation({
       onSuccess: (data) => {
-        toast.success(`Successfully created order ${data.orderNumber}`, {
-          position: "bottom-center",
+        toast({
+          description: `Successfully created order ${data.orderNumber}`,
+          variant: "success",
         });
         form.reset();
       },
       onError: (error) => {
-        return toast.error(error.message);
+        return toast({
+          variant: "destructive",
+          description: error.message,
+        });
       },
     });
 
@@ -214,7 +237,7 @@ const CreateAspenForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <section id="office-information" className="grid grid-cols-3 gap-3">
+        <section id="office-information" className="grid grid-cols-4 gap-3">
           <FormField
             control={form.control}
             name="orderNumber"
@@ -246,6 +269,48 @@ const CreateAspenForm = () => {
                     onChange={(e) => setQuery(e.target.value)}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="dateOrdered"
+            render={({ field }) => (
+              <FormItem className="flex flex-col space-y-4">
+                <FormLabel>Date Ordered</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      //@ts-ignore
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
@@ -399,9 +464,8 @@ const CreateAspenForm = () => {
                   type="button"
                   className="h-full w-full"
                   onClick={() => {
-                    toast.success(`Selected Office Name: ${suggestion.name}`, {
-                      position: "bottom-center",
-                      duration: 5000,
+                    toast({
+                      description: `Selected Office Name: ${suggestion.name}`,
                     });
                     form.setValue("officeName", suggestion.name);
                     form.setValue("officeId", suggestion.id);

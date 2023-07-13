@@ -30,6 +30,9 @@
  
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
+    --success: 147, 99%, 36%;
+    --success-foreground: 210 40% 98%;
  
     --ring: 215 20.2% 65.1%;
  
@@ -63,6 +66,9 @@
  
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
+
+    --success: 147, 99%, 36%;
+    --success-foreground: 210 40% 98%;
  
     --ring: 217.2 32.6% 17.5%;
   }

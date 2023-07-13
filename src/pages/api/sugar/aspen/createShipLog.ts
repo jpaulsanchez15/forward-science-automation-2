@@ -14,11 +14,9 @@ interface NextApiRequestWithSugarToken extends NextApiRequest {
     order_no: string;
     product_sales_total_c: string;
     office: string;
+    date_ordered_c: string;
   };
 }
-
-const date = new Date();
-date.toISOString();
 
 const createShipLog = async (
   req: NextApiRequestWithSugarToken,
@@ -36,6 +34,9 @@ const createShipLog = async (
       const orderNumberWithoutFirstChar = req.body.order_no;
       const price = req.body.product_sales_total_c;
       const officeId = req.body.office;
+      const date = req.body.date_ordered_c;
+
+      console.log(req.body);
 
       const createLog = async () => {
         const payload = {
@@ -52,9 +53,9 @@ const createShipLog = async (
           body: JSON.stringify(payload),
         });
 
-        const { id } = (await response.json()) as { id: string };
+        const data = await response.json();
 
-        return id;
+        return data.id;
       };
 
       const shipLogId = await createLog();
@@ -80,9 +81,10 @@ const createShipLog = async (
           }
         );
 
-        const { id } = (await response.json()) as { id: string };
+        const data = await response.json();
+        console.log(data);
 
-        return id;
+        return data.id;
       };
 
       const updatedLogId = await updateLog();

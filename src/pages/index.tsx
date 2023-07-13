@@ -59,11 +59,17 @@ const Home = () => {
         </h1>
 
         <CardsList />
-        <section className="mt-24 w-1/3">
+        <section className="mb-12 mt-24 w-1/3">
           <h2 className="mt-12 scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight transition-colors first:mt-0">
             Changelog
           </h2>
           <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.1.5</span> - Added a calendar
+              to the Create Order page. You can now add the correct order date
+              for the order. Made some UI changes to the Aspen fulfill page. -
+              7/13/23
+            </li>
             <li>
               <span className="font-semibold">v1.1.0</span> - Fixed a bug where
               the pricing was incorrect in the ESL and the visual on the

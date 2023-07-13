@@ -35,6 +35,7 @@ export const aspenRouter = createTRPCRouter({
         orderNumber: z.string(),
         officeName: z.string(),
         ordoroLink: z.string(),
+        dateOrdered: z.date(),
         trackingNumber: z.string(),
         products: z.object({
           theraStom: z.number().optional(),
@@ -53,12 +54,12 @@ export const aspenRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      // TODO: Change the input here for this.
       return ctx.prisma.aspenOrder.create({
-        // TODO: Look into pricing, seems bugged.
         data: {
           orderNumber: input.orderNumber,
           officeName: input.officeName,
+          createdAt: input.dateOrdered,
+          createdBy: ctx.session.user?.name,
           ordoroLink: "",
           trackingNumber: "",
           lines: {
