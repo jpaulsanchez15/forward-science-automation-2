@@ -1,28 +1,20 @@
 import * as productLibrary from "./productLibrary.json";
 import { env } from "../../env.mjs";
 
-type Payload = {
+interface OrderContents {
+  sku: string;
+  quantity: number;
+}
+
+interface Payload {
   box_shape: string;
   length?: string;
   width?: string;
   height?: string;
   weight?: string;
-};
+}
 
-type OrderContents = {
-  sku: string;
-  quantity: number;
-};
-
-type ProductCounts = {
-  [sku: string]: number;
-};
-
-type RevisedProductObj = {
-  [sku: string]: number;
-};
-
-const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
+export const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
   const addToPayload = [];
   const templatePayloadValues: Payload = {
     box_shape: "YOUR_PACKAGING",
@@ -32,44 +24,39 @@ const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
     weight: "",
   };
 
-  const totalProducts: string[] = [];
+  const totalProducts: Array<string> = [];
 
-  orderContents.map((item: OrderContents) => {
-    return totalProducts.push(
-      ...(Array(item.quantity).fill(item.sku) as string[])
-    );
+  orderContents.map((item) => {
+    return totalProducts.push(...Array(item.quantity).fill(item.sku));
   });
 
-  const reduced: ProductCounts = totalProducts.reduce(
-    (acc: ProductCounts, cv: string) => ((acc[cv] = ++acc[cv] || 1), acc),
+  const reduced = totalProducts.reduce(
+    (acc: any, cv: any) => ((acc[cv] = ++acc[cv] || 1), acc),
     {}
   );
 
-  const check12 = (count: number | undefined): [number, number] => [
-    ~~(count ?? 0 / 2),
-    count ?? 0 % 2,
-  ];
+  const check12 = (count: number) => [~~(count / 2), count % 2];
 
-  const updateProducts = (products: ProductCounts): RevisedProductObj => {
+  const updateProducts = (products: any) => {
     const [twelves, remainder] = check12(products["TS-16-6"]);
     products["TS-16-12"] = twelves;
     products["TS-16-6"] = remainder;
     return products;
   };
 
-  const revisedProductObj: RevisedProductObj = updateProducts(reduced);
-
+  const revisedProductObj = updateProducts(reduced);
   const finalProductList = [];
 
   for (const [key, value] of Object.entries(revisedProductObj)) {
-    value > 0 ? finalProductList.push(...Array<string>(value).fill(key)) : null;
+    (value as number) > 0
+      ? finalProductList.push(...Array(value).fill(key))
+      : null;
   }
 
   const whichDimensions: Array<{
     dimensions: { length: number; width: number; height: number; lb: number };
   }> = [];
-
-  finalProductList.forEach((item) => {
+  finalProductList.forEach((item: any) => {
     if (item in productLibrary) {
       whichDimensions.push(productLibrary[item as keyof typeof productLibrary]);
     }
@@ -101,7 +88,7 @@ const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
   return payload;
 };
 
-const formatAspenOrder = (orderContents: Array<OrderContents>) => {
+export const formatAspenOrder = async (orderContents: Array<OrderContents>) => {
   const addToPayload = [];
   const templatePayloadValues: Payload = {
     box_shape: "YOUR_PACKAGING",
@@ -114,9 +101,7 @@ const formatAspenOrder = (orderContents: Array<OrderContents>) => {
   const totalProducts: Array<string> = [];
 
   orderContents.map((item) => {
-    return totalProducts.push(
-      ...(Array(item.quantity).fill(item.sku) as string[])
-    );
+    return totalProducts.push(...Array(item.quantity).fill(item.sku));
   });
 
   const whichDimensions: Array<{
@@ -155,5 +140,3 @@ const formatAspenOrder = (orderContents: Array<OrderContents>) => {
 
   return payload;
 };
-
-export { formatShopifyOrder, formatAspenOrder };
