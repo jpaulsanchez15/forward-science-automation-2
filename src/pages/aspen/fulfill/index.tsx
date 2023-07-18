@@ -253,7 +253,7 @@ const Orders = ({
     setHandleLoading(true);
 
     try {
-      const label = formatAspenOrder(order.lines);
+      const label = await formatAspenOrder(order.lines);
 
       const sugarOffice = await fetch(
         `/api/sugar/aspen/findAspenOffice?officeName=${order.officeName ?? ""}`,
