@@ -117,12 +117,12 @@ const FulfillPage: NextPage = () => {
       <Head>
         <title>Forward Science Automation | Fulfill Aspen</title>
       </Head>
-      <main className="m-auto flex h-screen min-h-screen flex-col items-center justify-center">
+      <main className="m-auto flex  flex-col items-center justify-center">
         <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
         <div
           className={
             data.length > 0
-              ? `mx-4 my-3 grid grid-cols-5 items-center justify-center gap-2`
+              ? `mx-4 my-3 grid min-h-screen grid-cols-5 items-center justify-center gap-2`
               : `mx-auto flex items-center justify-center text-center`
           }
         >
