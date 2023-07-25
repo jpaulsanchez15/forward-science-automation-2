@@ -34,6 +34,8 @@ const server = z.object({
   STRIPE_LIVE_KEY: z.string(),
   STRIPE_SECRET_KEY: z.string(),
   ASANA_API_KEY: z.string(),
+  CHAT_PDF_KEY: z.string(),
+  UPLOADTHING_SECRET: z.string(),
 });
 
 /**
@@ -76,6 +78,8 @@ const processEnv = {
   STRIPE_LIVE_KEY: process.env.STRIPE_LIVE_KEY,
   ASANA_API_KEY: process.env.ASANA_API_KEY,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  CHAT_PDF_KEY: process.env.CHAT_PDF_KEY,
+  UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
