@@ -44,8 +44,6 @@ const CardsList = () => {
 // const PDF_SERVICES_CLIENT_SECRET = "p8e-zjZEPDlEhKgs2L_c90Wz5imHHE1BBptv";
 // const ORGANIZATION_ID = "A6DB29ED641092660A495C53@AdobeOrg";
 
-import { elements } from "./structuredData.json";
-
 export const getServerSideProps = async () => {
   // const adobeCredentials =
   //   adobe.Credentials.servicePrincipalCredentialsBuilder()
@@ -99,11 +97,11 @@ export const getServerSideProps = async () => {
   //   return "output/ExtractTextTableInfoFromPDF/extract" + dateString + ".zip";
   // }
 
-  elements.map((element) => {
-    element.Path == "//Document/Sect[2]/Table/TR/TD[2]/P"
-      ? console.log(element.Text)
-      : null;
-  });
+  // elements.map((element) => {
+  //   element.Path == "//Document/Sect[2]/Table/TR/TD[2]/P"
+  //     ? console.log(element.Text)
+  //     : null;
+  // });
 
   //Document/Sect[2]/Table/TR/TD[2]/P" - Order Number
   //Document/Sect[2]/Table/TR[2]/TD[2]/P - Order Date
