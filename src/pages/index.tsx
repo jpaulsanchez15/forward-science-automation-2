@@ -4,6 +4,8 @@ import { Cards } from "@/components/cards";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import * as adobe from "@adobe/pdfservices-node-sdk";
+import path from "path";
 
 const cardInfo = [
   {
@@ -36,6 +38,79 @@ const CardsList = () => {
       })}
     </div>
   );
+};
+
+// const PDF_SERVICES_CLIENT_ID = "6b2c5d22b6da47e99f36219f1fe9272d";
+// const PDF_SERVICES_CLIENT_SECRET = "p8e-zjZEPDlEhKgs2L_c90Wz5imHHE1BBptv";
+// const ORGANIZATION_ID = "A6DB29ED641092660A495C53@AdobeOrg";
+
+import { elements } from "./structuredData.json";
+
+export const getServerSideProps = async () => {
+  // const adobeCredentials =
+  //   adobe.Credentials.servicePrincipalCredentialsBuilder()
+  //     .withClientId(PDF_SERVICES_CLIENT_ID)
+  //     .withClientSecret(PDF_SERVICES_CLIENT_SECRET)
+  //     .build();
+
+  // const adobeContext = adobe.ExecutionContext.create(adobeCredentials);
+
+  // const INPUT_PDF = path.join(process.cwd(), "src", "pages", "test.pdf");
+
+  // // Create a new operation instance.
+  // const extractPDFOperation = adobe.ExtractPDF.Operation.createNew(),
+  //   input = adobe.FileRef.createFromLocalFile(
+  //     INPUT_PDF,
+  //     adobe.ExtractPDF.SupportedSourceFormat.pdf
+  //   );
+
+  // // Build extractPDF options
+  // const options = new adobe.ExtractPDF.options.ExtractPdfOptions.Builder()
+  //   .addElementsToExtract(adobe.ExtractPDF.options.ExtractElementType.TEXT)
+  //   .build();
+
+  // extractPDFOperation.setInput(input);
+  // extractPDFOperation.setOptions(options);
+
+  // let outputFilePath = createOutputFilePath();
+
+  // extractPDFOperation
+  //   .execute(adobeContext)
+  //   .then((result) => result.saveAsFile(outputFilePath))
+  //   .then(() => {
+  //     console.log("Successfully extracted information from PDF.");
+  //   })
+  //   .catch((err) => console.log(err));
+
+  // function createOutputFilePath() {
+  //   let date = new Date();
+  //   let dateString =
+  //     date.getFullYear() +
+  //     "-" +
+  //     ("0" + (date.getMonth() + 1)).slice(-2) +
+  //     "-" +
+  //     ("0" + date.getDate()).slice(-2) +
+  //     "T" +
+  //     ("0" + date.getHours()).slice(-2) +
+  //     "-" +
+  //     ("0" + date.getMinutes()).slice(-2) +
+  //     "-" +
+  //     ("0" + date.getSeconds()).slice(-2);
+  //   return "output/ExtractTextTableInfoFromPDF/extract" + dateString + ".zip";
+  // }
+
+  elements.map((element) => {
+    element.Path == "//Document/Sect[2]/Table/TR/TD[2]/P"
+      ? console.log(element.Text)
+      : null;
+  });
+
+  //Document/Sect[2]/Table/TR/TD[2]/P" - Order Number
+  //Document/Sect[2]/Table/TR[2]/TD[2]/P - Order Date
+
+  return {
+    props: {},
+  };
 };
 
 const Home = () => {

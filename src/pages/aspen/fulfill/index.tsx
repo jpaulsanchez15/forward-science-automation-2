@@ -19,6 +19,7 @@ import { api } from "@/utils/api";
 import { formatAspenOrder } from "@/utils/ordoro";
 import Head from "next/head";
 import { useToast } from "@/hooks/use-toast";
+import { useSession } from "next-auth/react";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
@@ -97,6 +98,8 @@ const FulfillPage: NextPage = () => {
   const { data, isLoading, refetch } = api.aspenOrder.getOrders.useQuery();
   const [disabled, isDisabled] = useState(false);
 
+  const { data: session } = useSession();
+
   if (isLoading) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
@@ -135,6 +138,7 @@ const FulfillPage: NextPage = () => {
                   ? 1
                   : 0
               )
+              .filter((order) => order.createdBy == session?.user?.name)
               .map((order) => {
                 return (
                   <Orders
