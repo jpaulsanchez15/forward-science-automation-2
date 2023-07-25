@@ -271,7 +271,7 @@ const Orders = ({
 
   const handleRetrieveSugarOfficeClick = async () => {
     isProcessing(true);
-    const { company, address1: address, phone } = shopify.shipping_address;
+    const { company, street1: address, phone } = order?.shipping_address ?? {};
 
     const formattedPhone = phone?.replace(/\D/g, "");
     const formattedPhoneTwo = formattedPhone?.replace(
