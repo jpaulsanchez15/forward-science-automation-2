@@ -132,7 +132,8 @@ export const formatAspenOrder = async (orderContents: Array<OrderContents>) => {
 
   const payload = {
     shipper_id: +env.NEXT_PUBLIC_SHIPPER_ID,
-    shipping_method: "GROUND_HOME_DELIVERY",
+    recipient_address_is_residential: false,
+    shipping_method: "FEDEX_GROUND",
     payment_account: env.NEXT_PUBLIC_PAYMENT_ACCOUNT,
     payment_type: "RECIPIENT",
     packages: addToPayload,

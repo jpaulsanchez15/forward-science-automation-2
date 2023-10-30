@@ -36,8 +36,6 @@ const createShipLog = async (
       const officeId = req.body.office;
       const date = req.body.date_ordered_c;
 
-      console.log(req.body);
-
       const createLog = async () => {
         const payload = {
           order_no: orderNumberWithoutFirstChar,
@@ -82,7 +80,6 @@ const createShipLog = async (
         );
 
         const data = await response.json();
-        console.log(data);
 
         return data.id;
       };

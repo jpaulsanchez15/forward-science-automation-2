@@ -32,7 +32,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
-    // console.log(req.body);
     // Actually creates the order for the label to then be made in Ordoro.
     const order = await prisma.aspenOrder.findUnique({
       where: {

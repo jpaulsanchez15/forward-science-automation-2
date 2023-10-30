@@ -10,7 +10,6 @@ const deleteAspenOrder = async (
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
-    console.log(req.body);
     // Deletes the order from the database.
     const order = await prisma.aspenOrder.delete({
       where: {
