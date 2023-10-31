@@ -71,6 +71,11 @@ const Home = () => {
               for instructions on how to process Shopify Orders. - 10/31/23
             </li>
             <li>
+              <span className="font-semibold">v1.1.6</span> - Changed Aspen
+              orders to be shipped FedEx Ground vs Home delivery for cheaper
+              shipping costs - 10/30/23
+            </li>
+            <li>
               <span className="font-semibold">v1.1.5</span> - Added a calendar
               to the Create Order page. You can now add the correct order date
               for the order. Made some UI changes to the Aspen fulfill page. -
