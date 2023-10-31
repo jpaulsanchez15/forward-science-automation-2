@@ -4,13 +4,12 @@ import { Cards } from "@/components/cards";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { UploadButton } from "@/utils/uploadthing";
 
 const cardInfo = [
-  {
-    title: "Shopify",
-    description: "Fulfill an existing Shopify order",
-  },
+  // {
+  //   title: "Shopify",
+  //   description: "Fulfill an existing Shopify order",
+  // },
   {
     title: "Aspen",
     description: "Automate Aspen Orders",
@@ -59,27 +58,18 @@ const Home = () => {
           Forward Science Automation
         </h1>
 
-        {/* <div>
-          <UploadButton
-            endpoint="pdfUploader"
-            onClientUploadComplete={(res) => {
-              // Do something with the response
-              console.log("Files: ", res);
-              alert("Upload Completed");
-            }}
-            onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
-            }}
-          />
-        </div> */}
-
         <CardsList />
         <section className="mb-12 mt-24 w-1/3">
           <h2 className="mt-12 scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight transition-colors first:mt-0">
             Changelog
           </h2>
           <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.1.7</span> - Shopify has been
+              disabled for the time being. You will not be able to access the
+              page. Please process them manually. You can refer to the FS Way
+              for instructions on how to process Shopify Orders. - 10/31/23
+            </li>
             <li>
               <span className="font-semibold">v1.1.5</span> - Added a calendar
               to the Create Order page. You can now add the correct order date

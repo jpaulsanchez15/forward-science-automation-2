@@ -27,12 +27,13 @@ export const Navbar = ({
       >
         FAQ
       </Link>
-      <Link
-        href="/shopify"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      {/* TODO: Change back to Link once it is fixed */}
+      <div
+        // href="/shopify"
+        className="text-sm font-medium text-muted-foreground line-through transition-colors hover:cursor-not-allowed hover:text-primary"
       >
         Shopify
-      </Link>
+      </div>
       <Link
         href="/aspen"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
