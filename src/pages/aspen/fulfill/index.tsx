@@ -40,9 +40,10 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
           <CardDescription>{props.madeBy}</CardDescription>
           <CardDescription>For: {props.officeName}</CardDescription>
           {props.ordoroLink !== "" && props.completed ? (
-            <CardDescription className="font-bold text-green-400 underline hover:cursor-pointer hover:text-green-600">
+            <CardDescription className="font-bold text-green-400 underline  hover:cursor-pointer hover:text-green-600">
               <Link
                 target="_blank"
+                className="visited:text-gray-400"
                 href={`https://abode.ordoro.com/label?$order=${
                   props.ordoroLink?.slice(7) ?? ""
                 }&docs=shippinglabel&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true`}
