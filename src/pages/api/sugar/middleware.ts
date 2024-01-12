@@ -8,7 +8,6 @@ interface NextApiRequestWithSugarToken extends NextApiRequest {
   access_token: string;
 }
 
-// TODO: Type this one
 const sugarMiddleware = (
   handler: (
     req: NextApiRequestWithSugarToken,
