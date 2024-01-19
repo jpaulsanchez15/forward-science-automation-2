@@ -1,9 +1,5 @@
-import { api } from "@/utils/api";
-import { Loader2 } from "lucide-react";
-
 import { ShopifyOrder, columns } from "../../../components/shopify/columns";
 import { DataTable } from "../../../components/shopify/dataTable";
-import { ShopifyOrderType } from "@/pages/api/shopify";
 
 type TrackerItem = {
   id: string;
@@ -51,7 +47,7 @@ const SalesTracker = ({ data }: any) => {
   return (
     <div>
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={tracker} />
+        <DataTable columns={columns} data={tracker} csvData={tracker} />
       </div>
     </div>
   );

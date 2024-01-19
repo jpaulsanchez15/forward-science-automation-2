@@ -15,7 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SessionProvider session={session}>
-        <NextTopLoader />
+        {/* <NextTopLoader  /> */}
         <Navbar />
         <Component {...pageProps} />
         <Toaster />

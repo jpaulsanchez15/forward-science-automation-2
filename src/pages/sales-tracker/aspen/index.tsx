@@ -14,7 +14,7 @@ type TrackerItem = {
 };
 
 const SalesTracker = () => {
-  const { data, isLoading, refetch } = api.aspenOrder.getCompleted.useQuery();
+  const { data, isLoading } = api.aspenOrder.getCompleted.useQuery();
 
   if (isLoading) {
     return (
@@ -51,7 +51,7 @@ const SalesTracker = () => {
   return (
     <div>
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={tracker} />
+        <DataTable columns={columns} data={tracker} csvData={tracker} />
       </div>
     </div>
   );

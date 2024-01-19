@@ -23,18 +23,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
+import { CSVLink, CSVDownload } from "react-csv";
+import { useToast } from "@/hooks/use-toast";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  csvData?: any;
 }
+
+const today = new Date();
+const date =
+  today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  csvData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
+
+  const { toast } = useToast();
 
   const table = useReactTable({
     data,
@@ -66,6 +77,21 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <div className="flex-1" />
+        <CSVLink
+          onClick={() =>
+            toast({
+              title: "Exporting...",
+              description: "Your file is being exported.",
+              variant: "default",
+              duration: 5000,
+            })
+          }
+          filename={`${date} - Aspen Orders Export`}
+          data={csvData}
+        >
+          <Button variant="outline">Download me</Button>
+        </CSVLink>
       </div>
       <div className="rounded-md border font-bold">
         <Table>
