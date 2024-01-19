@@ -46,7 +46,6 @@ const AspenHome = () => {
         <h1 className="mb-12 text-4xl font-bold">Aspen Home</h1>
         <CardsList />
       </section>
-      <section></section>
     </main>
   );
 };
