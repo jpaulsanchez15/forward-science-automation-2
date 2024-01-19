@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
           filename={`${date} - Aspen Orders Export`}
           data={csvData}
         >
-          <Button variant="outline">Download me</Button>
+          <Button variant="outline">Export</Button>
         </CSVLink>
       </div>
       <div className="rounded-md border font-bold">
