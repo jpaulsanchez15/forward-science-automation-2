@@ -18,7 +18,7 @@ type TrackerItem = {
 
 export const getServerSideProps = async () => {
   const res = await fetch(
-    "https://www.forward-science-automation.vercel.app/api/shopify/getCommission"
+    "http://www.forward-science-automation.vercel.app/api/shopify/getCommission"
   );
   const data = await res.json();
 
