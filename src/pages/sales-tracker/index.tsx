@@ -40,10 +40,10 @@ const AspenHome = () => {
   return (
     <main>
       <Head>
-        <title>Forward Science Automation | Aspen Home</title>
+        <title>Forward Science Automation | Sales Tracker</title>
       </Head>
       <section className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="mb-12 text-4xl font-bold">Aspen Home</h1>
+        <h1 className="mb-12 text-4xl font-bold">Sales Tracker</h1>
         <CardsList />
       </section>
     </main>
