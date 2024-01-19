@@ -20,7 +20,8 @@ interface ShopifyOrderBody extends NextApiRequest {
     order: Array<Line>;
     lines: Array<{
       shipper_id: number;
-      shipping_method: "GROUND_HOME_DELIVERY";
+      recipient_address_is_residential: boolean;
+      shipping_method: "GROUND_HOME_DELIVERY" | "FEDEX_GROUND";
       payment_account: string;
       payment_type: "RECIPIENT";
       packages: Array<{
@@ -43,7 +44,6 @@ const createShopifyLabel = async (
     res.status(405).send("Method not allowed");
     return;
   } else {
-    console.log(req.body);
     const response = await fetch(
       `${ORDORO_API_URL}/${req.body.num ?? ""}/label/fedex`,
       {
@@ -60,7 +60,6 @@ const createShopifyLabel = async (
     );
 
     const data = (await response.json()) as OrdoroLabelResponseType;
-    console.log(data);
 
     const { tracking_number: trackingNumber } = data;
 

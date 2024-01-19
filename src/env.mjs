@@ -47,7 +47,8 @@ const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_SHIPPER_ID: z.string(),
   NEXT_PUBLIC_PAYMENT_ACCOUNT: z.string(),
-  NEXT_PUBLIC_SHOPIFY_STORE_URL : z.string().url(),
+  NEXT_PUBLIC_SHOPIFY_STORE_URL: z.string().url(),
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string(),
 });
 
 /**
@@ -80,6 +81,7 @@ const processEnv = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   CHAT_PDF_KEY: process.env.CHAT_PDF_KEY,
   UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
+  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

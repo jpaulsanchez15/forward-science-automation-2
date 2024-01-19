@@ -40,6 +40,12 @@ export const Navbar = ({
       >
         Aspen
       </Link>
+      <Link
+        href="/sales-tracker"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Sales Tracker
+      </Link>
       <div>
         <ThemeToggle />
       </div>

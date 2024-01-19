@@ -29,6 +29,21 @@ export const aspenRouter = createTRPCRouter({
     });
     return orders;
   }),
+  getCompleted: protectedProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.prisma.aspenOrder.findMany({
+      where: {
+        fileAway: true,
+        // created this month
+        createdAt: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        },
+      },
+      include: {
+        lines: true,
+      },
+    });
+    return orders;
+  }),
   createOrder: protectedProcedure
     .input(
       z.object({
