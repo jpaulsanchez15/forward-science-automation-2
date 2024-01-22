@@ -36,7 +36,7 @@ const CardsList = () => {
   );
 };
 
-const AspenHome = () => {
+const SalesTrackerHome = () => {
   return (
     <main>
       <Head>
@@ -50,4 +50,4 @@ const AspenHome = () => {
   );
 };
 
-export default AspenHome;
+export default SalesTrackerHome;

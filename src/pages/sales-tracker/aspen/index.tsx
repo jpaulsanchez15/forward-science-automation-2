@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 
 import { AspenOrder, columns } from "../../../components/aspen/columns";
 import { DataTable } from "../../../components/aspen/dataTable";
+import Head from "next/head";
 
 type TrackerItem = {
   id: string;
@@ -50,6 +51,9 @@ const SalesTracker = () => {
 
   return (
     <div>
+      <Head>
+        <title>Forward Science Automation | Aspen - Sales Tracker</title>
+      </Head>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={tracker} csvData={tracker} />
       </div>

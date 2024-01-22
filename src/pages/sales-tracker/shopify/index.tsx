@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { ShopifyOrder, columns } from "../../../components/shopify/columns";
 import { DataTable } from "../../../components/shopify/dataTable";
 
@@ -51,6 +52,9 @@ const SalesTracker = ({ data }: any) => {
 
   return (
     <div>
+      <Head>
+        <title>Forward Science Automation | Shopify - Sales Tracker</title>
+      </Head>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={tracker} csvData={tracker} />
       </div>
