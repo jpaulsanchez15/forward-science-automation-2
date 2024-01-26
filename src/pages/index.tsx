@@ -65,6 +65,16 @@ const Home = () => {
           </h2>
           <ul className="mt-4 space-y-2">
             <li>
+              <span className="font-semibold">v1.2.1</span> - FS-08 is now
+              functioning correctly and a fix has been made for accessories.
+              There is one more change for accessories needed. - 1/26/24
+            </li>
+            <li>
+              <span className="font-semibold">v1.2.0</span> - Sales Tracker has
+              been added. You can now export data for Aspen Orders and Shopify
+              Orders only. More filters to come in the future! - 1/19/24
+            </li>
+            <li>
               <span className="font-semibold">v1.1.7</span> - Shopify has been
               disabled for the time being. You will not be able to access the
               page. Please process them manually. You can refer to the FS Way
