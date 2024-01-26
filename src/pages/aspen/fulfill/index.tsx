@@ -194,8 +194,7 @@ const Orders = ({
   const deletedOrder = api.aspenOrder.deleteOrder.useMutation({
     onSuccess: () => {
       toast({
-        description:
-          "Order deleted! Please ensure you delete the items in Ordoro and Sugar if you made it that far.",
+        description: `PO-${order.orderNumber} Order deleted! Please ensure you delete the items in Ordoro and Sugar if you made it that far.`,
         variant: "success",
       });
       refetch().catch(console.error);
@@ -301,34 +300,16 @@ const Orders = ({
           "Zip code is incorrect. Please go to the order in Ordoro and fix it, then go to Sugar and fix the zip code."
         );
 
-      const shipLogItemsMap = order.lines.map((line) => {
+      const shipLogItems = order.lines.map((line) => {
         return {
           name: line.productName,
           value: line.quantity,
         };
       });
 
-      const shipLogItems = [
-        // TODO: Kinda cringe but needs to work for now I guess.
-        { name: "TheraStom 12 pk", value: shipLogItemsMap[0]?.value },
-        { name: "OxiStom 6 pk", value: shipLogItemsMap[1]?.value },
-        { name: "SalivaMAX 10 pk", value: shipLogItemsMap[2]?.value },
-        {
-          name: "Space Grey OID Kit \n Follow BOM",
-          value: shipLogItemsMap[3]?.value,
-        },
-        { name: "FS-88", value: shipLogItemsMap[4]?.value },
-        { name: "FS-84", value: shipLogItemsMap[5]?.value },
-        { name: "FS-760", value: shipLogItemsMap[6]?.value },
-        { name: "FS-03", value: shipLogItemsMap[7]?.value },
-        { name: "FS-701", value: shipLogItemsMap[8]?.value },
-      ];
-
       const listItemString = shipLogItems
-        .filter((item) => item?.value ?? 0 > 0)
-        .map((item) => {
-          return `${item.value ?? 0} x ${item.name}`;
-        })
+        .filter((item) => item.value > 0)
+        .map((item) => `${item.value} x ${item.name}`)
         .join("\n");
 
       const shipLog = await fetch("/api/sugar/aspen/createShipLog", {

@@ -59,6 +59,7 @@ export const aspenRouter = createTRPCRouter({
           oralID: z.number().optional(),
           accessories: z.object({
             fs88: z.number().optional(),
+            fs08: z.number().optional(),
             fs84: z.number().optional(),
             fs760: z.number().optional(),
             fs03: z.number().optional(),
@@ -70,6 +71,7 @@ export const aspenRouter = createTRPCRouter({
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.aspenOrder.create({
+        // TODO: This definitely needs to be changed.
         data: {
           orderNumber: input.orderNumber,
           officeName: input.officeName,
@@ -80,19 +82,19 @@ export const aspenRouter = createTRPCRouter({
           lines: {
             create: [
               {
-                productName: "TheraStom",
+                productName: "TheraStom 12 pk",
                 sku: "TS-16-12",
                 quantity: input.products.theraStom || 0,
                 price: (input.products.theraStom ?? 0) * 63,
               },
               {
-                productName: "OxiStom",
+                productName: "OxiStom 6 pk",
                 sku: "OX-13-6",
                 quantity: input.products.oxiStom || 0,
                 price: (input.products.oxiStom?.valueOf() ?? 0) * 25.5,
               },
               {
-                productName: "SalivaMax",
+                productName: "SalivaMax 10 pk",
                 sku: "42029121142953",
                 quantity: input.products.salivaMax || 0,
                 price: (input.products.salivaMax?.valueOf() ?? 0) * 110,
@@ -133,6 +135,12 @@ export const aspenRouter = createTRPCRouter({
                 sku: "FS-03",
                 quantity: input.products.accessories.fs03 || 0,
                 price: (input.products.accessories.fs03 ?? 0) * 60,
+              },
+              {
+                productName: "Fitted Glasses (FS-08) Default Title",
+                sku: "FS-08",
+                quantity: input.products.accessories.fs08 || 0,
+                price: (input.products.accessories.fs08 ?? 0) * 125,
               },
             ],
           },
