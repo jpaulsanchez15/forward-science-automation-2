@@ -94,9 +94,9 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     const billingAddress = shippingAddress;
 
     const nameMap = {
-      TheraStom: "TheraStom 12 pk",
-      OxiStom: "OxiStom 6 pk",
-      SalivaMax: "SalivaMAX® 10 pk of 30 ct boxes",
+      "TheraStom 12 pk": "TheraStom 12 pk",
+      "OxiStom 6 pk": "OxiStom 6 pk",
+      "SalivaMax 10 pk": "SalivaMAX® 10 pk of 30 ct boxes",
       OralID: "OralID Kit (FS-11) Default Title",
       // TODO: Expand on this so it matches what we did earlier.
       "Laminated Progression Sheets (4) (FS-760)":
@@ -113,9 +113,9 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     };
 
     const priceMap = {
-      TheraStom: 63,
-      OxiStom: 25.5,
-      SalivaMax: 110,
+      "TheraStom 12 pk": 63,
+      "OxiStom 6 pk": 25.5,
+      "SalivaMax 10 pk": 110,
       OralID: 995,
       "Laminated Progression Sheets (4) (FS-760)": 10,
       "18 Pack CR123A Batteries (FS-03) Default Title": 40,
