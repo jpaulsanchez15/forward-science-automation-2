@@ -65,8 +65,9 @@ const Home = () => {
           </h2>
           <ul className="mt-4 space-y-2">
             <li>
-              <span className="font-semibold">v1.2.2</span> - RMA_Hold is now
-              correctly identified on offices that are waiting for a PO. -
+              <span className="font-semibold">v1.2.2</span> -
+              <span className="font-semibold text-red-500">RMA_Hold</span> is
+              now correctly identified on offices that are waiting for a PO. -
               1/31/24
             </li>
             <li>
