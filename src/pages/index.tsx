@@ -65,6 +65,11 @@ const Home = () => {
           </h2>
           <ul className="mt-4 space-y-2">
             <li>
+              <span className="font-semibold">v1.2.2</span> - RMA_Hold is now
+              correctly identified on offices that are waiting for a PO. -
+              1/31/24
+            </li>
+            <li>
               <span className="font-semibold">v1.2.1</span> - FS-08 is now
               functioning correctly and a fix has been made for accessories.
               There is one more change for accessories needed. - 1/26/24

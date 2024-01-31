@@ -475,6 +475,22 @@ const CreateAspenForm = () => {
                   key={suggestion.id}
                 >
                   <ul>
+                    <li>
+                      {suggestion.tag.map((tag) => {
+                        if (tag.name === "RMA_Hold") {
+                          return (
+                            <span
+                              key={tag.id}
+                              className="ml-2 text-2xl font-bold text-red-500"
+                            >
+                              **{tag.name}**
+                            </span>
+                          );
+                        } else {
+                          return null;
+                        }
+                      })}
+                    </li>
                     <li>Name: {suggestion.name}</li>
                     <li>Street: {suggestion.shipping_address_street}</li>
                     <li>City: {suggestion.shipping_address_city}</li>
