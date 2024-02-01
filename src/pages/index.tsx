@@ -47,6 +47,8 @@ const Home = () => {
     },
   });
 
+  console.log("here");
+
   return (
     <>
       <Head>
