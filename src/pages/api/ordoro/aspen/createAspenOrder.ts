@@ -8,6 +8,8 @@ import type { SugarOffice } from "@/types/sugar/index";
 const ORDORO_API_USERNAME = env.ORDORO_API_USERNAME;
 const ORDORO_API_PASSWORD = env.ORDORO_API_PASSWORD;
 
+// This route actually creates the order for the label to then be made in Ordoro.
+
 interface NewBody extends NextApiRequestWithBody {
   body: {
     orderNumber: string;
@@ -32,7 +34,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     res.status(405).json({ message: "Method not allowed" });
     return;
   } else {
-    // Actually creates the order for the label to then be made in Ordoro.
     const order = await prisma.aspenOrder.findUnique({
       where: {
         orderNumber: req.body.orderNumber ?? "",
@@ -98,7 +99,6 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
       "OxiStom 6 pk": "OxiStom 6 pk",
       "SalivaMax 10 pk": "SalivaMAX® 10 pk of 30 ct boxes",
       OralID: "OralID Kit (FS-11) Default Title",
-      // TODO: Expand on this so it matches what we did earlier.
       "Laminated Progression Sheets (4) (FS-760)":
         "Laminated Progression Sheets (4) (FS-760)",
       "18 Pack CR123A Batteries (FS-03) Default Title":

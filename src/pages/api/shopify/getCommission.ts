@@ -10,19 +10,6 @@ export type ShopifyOrderType = {
 };
 
 const currentDate = new Date();
-const firstDayOfCurrentMonth = new Date(
-  currentDate.getFullYear(),
-  currentDate.getMonth(),
-  1
-);
-const lastDayOfCurrentMonth = new Date(
-  currentDate.getFullYear(),
-  currentDate.getMonth() + 1,
-  0
-);
-
-const formattedStartDate = firstDayOfCurrentMonth.toISOString();
-const formattedEndDate = lastDayOfCurrentMonth.toISOString();
 
 const getShopifyInfo = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "GET") {
@@ -30,7 +17,7 @@ const getShopifyInfo = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   } else {
     const response = await fetch(
-      `${SHOPIFY_STORE_URL}.json?status=closed&processed_at_min=${formattedStartDate}&processed_at_max=${formattedEndDate}`,
+      `${SHOPIFY_STORE_URL}.json?limit=250&status=closed&created_at_min=2024-01-01T00:00:00.000Z&created_at_max=${currentDate.toISOString()}`,
       {
         method: "GET",
         headers: {
@@ -51,18 +38,18 @@ const getShopifyInfo = async (req: NextApiRequest, res: NextApiResponse) => {
 
 export default getShopifyInfo;
 
-const checkProfessionalProductLine = (order: ShopifyOrderType) => {
-  const items = order.orders.map((order) => {
-    return order.line_items;
-  });
+// const checkProfessionalProductLine = (order: ShopifyOrderType) => {
+//   const items = order.orders.map((order) => {
+//     return order.line_items;
+//   });
 
-  const check = items.filter((item) => {
-    return item.map((product) => {
-      professionalProductLine.includes(product.sku) ? item : null;
-    }, []);
-  });
+//   const check = items.filter((item) => {
+//     return item.map((product) => {
+//       professionalProductLine.includes(product.sku) ? item : null;
+//     }, []);
+//   });
 
-  return check;
-};
+//   return check;
+// };
 
-const professionalProductLine = ["BS-01-10", "TS-16-6", "OX-13-6"];
+// const professionalProductLine = ["BS-01-10", "TS-16-6", "OX-13-6"];
