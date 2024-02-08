@@ -54,10 +54,12 @@ export const columns: ColumnDef<ShopifyOrder>[] = [
       );
     },
   },
+  /* This is pretty hacky but not sure how to get it to access the data without it being here.
+   * Investigate further
+   */
   {
     accessorKey: "link",
-    header: () => null,
-    cell: () => null,
+    accessorFn: (row) => row.link,
   },
   {
     accessorKey: "orderNumber",
