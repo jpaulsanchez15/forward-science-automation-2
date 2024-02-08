@@ -59,7 +59,8 @@ export const columns: ColumnDef<ShopifyOrder>[] = [
    */
   {
     accessorKey: "link",
-    accessorFn: (row) => row.link,
+    header: () => null,
+    cell: () => null,
   },
   {
     accessorKey: "orderNumber",
