@@ -5,6 +5,13 @@ import {
 } from "@/server/api/trpc";
 import { z } from "zod";
 
+const professionalProductLine = [
+  "TheraStom 12 pk",
+  "OxiStom 6 pk",
+  "SalivaMax 10 pk",
+  "OralID",
+];
+
 export const aspenRouter = createTRPCRouter({
   getOrder: protectedProcedure
     .input(z.object({ orderNumber: z.string() }))
@@ -29,17 +36,23 @@ export const aspenRouter = createTRPCRouter({
     });
     return orders;
   }),
-  getCompleted: protectedProcedure.query(async ({ ctx }) => {
+  getCompletedOrders: protectedProcedure.query(async ({ ctx, input }) => {
     const orders = await ctx.prisma.aspenOrder.findMany({
       where: {
         fileAway: true,
-        // created this month
+        // created last month
         createdAt: {
-          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          gte: "2024-01-01T00:00:00.000Z",
         },
       },
       include: {
-        lines: true,
+        lines: {
+          where: {
+            productName: {
+              in: professionalProductLine,
+            },
+          },
+        },
       },
     });
     return orders;
