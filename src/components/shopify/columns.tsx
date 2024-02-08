@@ -7,6 +7,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 // You can use a Zod schema here if you want.
 export type ShopifyOrder = {
   id: string;
+  link: string;
   date: Date;
   orderNumber: string;
   product: string;
@@ -54,8 +55,25 @@ export const columns: ColumnDef<ShopifyOrder>[] = [
     },
   },
   {
+    accessorKey: "link",
+    header: () => null,
+    cell: () => null,
+  },
+  {
     accessorKey: "orderNumber",
     header: "Order Number",
+    cell: ({ row }) => {
+      return (
+        <a
+          href={row.getValue("link")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:cursor-pointer hover:underline"
+        >
+          {row.getValue("orderNumber")}
+        </a>
+      );
+    },
   },
   {
     accessorKey: "product",
