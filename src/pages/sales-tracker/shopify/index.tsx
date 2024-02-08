@@ -15,7 +15,7 @@ type TrackerItem = {
 
 export const getStaticProps = async () => {
   const res = await fetch(
-    "http://forward-science-automation.vercel.app/api/shopify/getCommission"
+    "https://forward-science-automation.vercel.app/api/shopify/getCommission"
   );
   const data = await res.json();
 
