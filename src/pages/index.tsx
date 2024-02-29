@@ -67,6 +67,14 @@ const Home = () => {
           </h2>
           <ul className="mt-4 space-y-2">
             <li>
+              <span className="font-semibold">v1.2.5</span> - Added a button to
+              swap between who created orders, either my created orders (Orders
+              that you have made) or all created Aspen orders (All orders that
+              are not fulfilled). Reformatted the order helper function to help
+              prepare for making a new form for all other non Shopify and Aspen
+              orders. Also started preparations for a shipping tab. - 2/29/24
+            </li>
+            <li>
               <span className="font-semibold">v1.2.2</span> -
               <span className="font-semibold text-red-500"> RMA_Hold</span> is
               now correctly identified on offices that are waiting for a PO. -
