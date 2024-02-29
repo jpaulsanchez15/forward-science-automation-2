@@ -16,10 +16,11 @@ import type { OrdoroLabelResponseType, OrdoroOrder } from "@/types/ordoro";
 import type { SugarOffice } from "@/types/sugar";
 import type { GetOrdersType } from "@/types/trpc";
 import { api } from "@/utils/api";
-import { formatAspenOrder } from "@/utils/ordoro";
+import { formatOrder } from "@/utils/ordoro";
 import Head from "next/head";
 import { useToast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
+import { User } from "@prisma/client";
 
 type OrdoroLabel = {
   data: OrdoroLabelResponseType;
@@ -98,6 +99,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
 const FulfillPage: NextPage = () => {
   const { data, isLoading, refetch } = api.aspenOrder.getOrders.useQuery();
   const [disabled, isDisabled] = useState(false);
+  const [showMyOrders, setShowMyOrders] = useState(true);
 
   const { data: session } = useSession();
 
@@ -123,6 +125,16 @@ const FulfillPage: NextPage = () => {
       </Head>
       <main className="m-auto flex min-h-screen  flex-col items-center justify-center">
         <h1 className="mb-6 text-center text-4xl font-bold">Fulfill Aspen</h1>
+        <div>
+          {data.length > 0 ? (
+            <Button onClick={() => setShowMyOrders(!showMyOrders)}>
+              {showMyOrders
+                ? "Show All Created Orders"
+                : "Show my created orders"}
+            </Button>
+          ) : null}
+        </div>
+
         <div
           className={
             data.length > 0
@@ -139,7 +151,9 @@ const FulfillPage: NextPage = () => {
                   ? 1
                   : 0
               )
-              .filter((order) => order.createdBy == session?.user?.name)
+              .filter((order) =>
+                showMyOrders ? order.createdBy == session?.user?.name : order
+              )
               .map((order) => {
                 return (
                   <Orders
@@ -206,7 +220,10 @@ const Orders = ({
 
   const fileAwayOrder = api.aspenOrder.completeOrder.useMutation({
     onSuccess: () => {
-      toast({ description: "Order filed away!", variant: "success" });
+      toast({
+        description: `PO-${order.orderNumber} filed away!`,
+        variant: "success",
+      });
       refetch().catch(console.error);
     },
     onError: () => {
@@ -257,7 +274,7 @@ const Orders = ({
     setHandleLoading(true);
 
     try {
-      const label = await formatAspenOrder(order.lines);
+      const label = await formatOrder(order.lines, true);
 
       const sugarOffice = await fetch(
         `/api/sugar/aspen/findAspenOffice?officeName=${order.officeName ?? ""}`,

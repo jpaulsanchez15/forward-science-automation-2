@@ -88,7 +88,64 @@ export const formatShopifyOrder = (orderContents: Array<OrderContents>) => {
   return payload;
 };
 
-export const formatAspenOrder = async (orderContents: Array<OrderContents>) => {
+// export const formatAspenOrder = async (orderContents: Array<OrderContents>) => {
+//   const addToPayload = [];
+//   const templatePayloadValues: Payload = {
+//     box_shape: "YOUR_PACKAGING",
+//     length: "",
+//     width: "",
+//     height: "",
+//     weight: "",
+//   };
+
+//   const totalProducts: Array<string> = [];
+
+//   orderContents.map((item) => {
+//     return totalProducts.push(...Array(item.quantity).fill(item.sku));
+//   });
+
+//   const whichDimensions: Array<{
+//     dimensions: { length: number; width: number; height: number; lb: number };
+//   }> = [];
+//   totalProducts.forEach((item) => {
+//     if (item in productLibrary) {
+//       whichDimensions.push(productLibrary[item as keyof typeof productLibrary]);
+//     }
+//   });
+
+//   for (let i = 0; i < whichDimensions.length; i++) {
+//     const values = [
+//       "YOUR_PACKAGING",
+//       whichDimensions[i]?.dimensions?.length,
+//       whichDimensions[i]?.dimensions?.width,
+//       whichDimensions[i]?.dimensions?.height,
+//       whichDimensions[i]?.dimensions?.lb,
+//     ];
+
+//     const payloadObj: Partial<Payload> = {};
+//     for (let j = 0; j < values.length; j++) {
+//       payloadObj[Object.keys(templatePayloadValues)[j] as keyof Payload] =
+//         values[j] as string;
+//     }
+//     addToPayload.push(payloadObj);
+//   }
+
+//   const payload = {
+//     shipper_id: +env.NEXT_PUBLIC_SHIPPER_ID,
+//     recipient_address_is_residential: false,
+//     shipping_method: "FEDEX_GROUND",
+//     payment_account: env.NEXT_PUBLIC_PAYMENT_ACCOUNT,
+//     payment_type: "RECIPIENT",
+//     packages: addToPayload,
+//   };
+
+//   return payload;
+// };
+
+export const formatOrder = async (
+  orderContents: Array<OrderContents>,
+  aspenOrder: boolean
+) => {
   const addToPayload = [];
   const templatePayloadValues: Payload = {
     box_shape: "YOUR_PACKAGING",
@@ -130,14 +187,17 @@ export const formatAspenOrder = async (orderContents: Array<OrderContents>) => {
     addToPayload.push(payloadObj);
   }
 
-  const payload = {
+  const payload: Record<string, any> = {
     shipper_id: +env.NEXT_PUBLIC_SHIPPER_ID,
     recipient_address_is_residential: false,
     shipping_method: "FEDEX_GROUND",
-    payment_account: env.NEXT_PUBLIC_PAYMENT_ACCOUNT,
-    payment_type: "RECIPIENT",
     packages: addToPayload,
   };
+
+  if (aspenOrder) {
+    payload.payment_account = env.NEXT_PUBLIC_PAYMENT_ACCOUNT;
+    payload.payment_type = "RECIPIENT";
+  }
 
   return payload;
 };
