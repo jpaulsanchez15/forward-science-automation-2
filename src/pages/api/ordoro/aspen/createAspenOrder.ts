@@ -144,6 +144,10 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
 
     const payload = JSON.stringify({
       order_id: `${formattedDate}-${order.orderNumber ?? ""}`,
+      grand_total: productArray.reduce(
+        (acc, line) => acc + line.total_price,
+        0
+      ),
       billing_address: billingAddress,
       shipping_address: shippingAddress,
       lines: productArray,
