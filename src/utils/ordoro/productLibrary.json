@@ -134,5 +134,21 @@
       "height": 12,
       "lb": 64
     }
+  },
+  "PS-1017": {
+    "dimensions": {
+      "length": 12,
+      "width": 9,
+      "height": 4,
+      "lb": 2
+    }
+  },
+  "PS-SAGE INIT": {
+    "dimensions": {
+      "length": 12,
+      "width": 9,
+      "height": 4,
+      "lb": 2
+    }
   }
 }

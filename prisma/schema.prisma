@@ -51,6 +51,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     orders        AspenOrder[]
+    SageOrder     SageOrder[]
 }
 
 model VerificationToken {
@@ -71,6 +72,8 @@ model Line {
     shopifyOrderId String?
     aspenOrder     AspenOrder?   @relation(fields: [aspenOrderId], references: [id])
     aspenOrderId   String?
+    SageOrder      SageOrder?    @relation(fields: [sageOrderId], references: [id])
+    sageOrderId    String?
 }
 
 model ShopifyOrder {
@@ -93,6 +96,22 @@ model AspenOrder {
     fileAway       Boolean  @default(false)
     User           User?    @relation(fields: [userId], references: [id])
     userId         String?
+    sugarShiplogId String?
+}
+
+model SageOrder {
+    id             String   @id @default(cuid())
+    orderNumber    String   @unique
+    createdAt      DateTime @default(now())
+    officeName     String
+    ordoroLink     String
+    lines          Line[]
+    createdBy      String?
+    trackingNumber String?
+    fileAway       Boolean  @default(false)
+    User           User?    @relation(fields: [userId], references: [id])
+    userId         String?
+    sugarShiplogId String?
 }
 
 model DelinquentCustomer {

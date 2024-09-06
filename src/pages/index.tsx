@@ -47,8 +47,6 @@ const Home = () => {
     },
   });
 
-  console.log("here");
-
   return (
     <>
       <Head>
@@ -66,6 +64,17 @@ const Home = () => {
             Changelog
           </h2>
           <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.3.0</span> - Sage Orders are
+              now supported. You can now create a shipping label for Sage
+              orders!
+            </li>
+            <li>
+              <span className="font-semibold">v1.2.6</span> - The packing list
+              is now included in the shipment for orders. Fixed an issue where
+              created orders were not displaying the price in all places -
+              4/9/24
+            </li>
             <li>
               <span className="font-semibold">v1.2.5</span> - Added a button to
               swap between who created orders, either my created orders (Orders

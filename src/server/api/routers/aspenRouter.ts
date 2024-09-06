@@ -36,6 +36,18 @@ export const aspenRouter = createTRPCRouter({
     });
     return orders;
   }),
+  // shipOutOrders: protectedProcedure.query(async ({ ctx }) => {
+  //   const orders = await ctx.prisma.aspenOrder.findMany({
+  //     where: {
+  //       AND: [{ fileAway: true }, { sugarShiplogId: { not: "n/a" || null } }],
+  //     },
+  //     include: {
+  //       lines: true,
+  //     },
+  //   });
+  //   return orders;
+  // }),
+
   getCompletedOrders: protectedProcedure.query(async ({ ctx, input }) => {
     const orders = await ctx.prisma.aspenOrder.findMany({
       where: {

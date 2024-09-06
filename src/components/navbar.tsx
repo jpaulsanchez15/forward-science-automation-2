@@ -27,6 +27,7 @@ export const Navbar = ({
       >
         FAQ
       </Link>
+
       {/* TODO: Change back to Link once it is fixed */}
       <div
         // href="/shopify"
@@ -40,6 +41,24 @@ export const Navbar = ({
       >
         Aspen
       </Link>
+      <Link
+        href="/sage"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Sage
+      </Link>
+      {/* <Link
+          href="/shipping"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        >
+          Shipping
+        </Link> */}
+      {/* <Link
+        href="/otc"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        OTC
+      </Link> */}
       <Link
         href="/sales-tracker"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
