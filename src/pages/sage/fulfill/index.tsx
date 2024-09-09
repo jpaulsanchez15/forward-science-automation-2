@@ -47,7 +47,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
                 className="visited:text-gray-400 visited:hover:text-gray-600"
                 href={`https://abode.ordoro.com/label?$order=${
                   props.ordoroLink?.slice(7) ?? ""
-                }&docs=shippinglabel&docs=packing&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true&showPrice=true&showBarcode=true`}
+                }&docs=shippinglabel&docs=packing&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true&showPrice=true&showBarcode=true&showCustomerNotes=true&show_packing_list_details=true`}
               >
                 Ordoro Link
               </Link>
