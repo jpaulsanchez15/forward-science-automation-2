@@ -110,13 +110,13 @@ export const aspenRouter = createTRPCRouter({
                 productName: "TheraStom 12 pk",
                 sku: "TS-16-12",
                 quantity: input.products.theraStom || 0,
-                price: (input.products.theraStom ?? 0) * 63,
+                price: (input.products.theraStom ?? 0) * 69,
               },
               {
                 productName: "OxiStom 6 pk",
                 sku: "OX-13-6",
                 quantity: input.products.oxiStom || 0,
-                price: (input.products.oxiStom?.valueOf() ?? 0) * 25.5,
+                price: (input.products.oxiStom?.valueOf() ?? 0) * 27.9,
               },
               {
                 productName: "SalivaMax 10 pk",

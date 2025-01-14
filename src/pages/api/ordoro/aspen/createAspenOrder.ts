@@ -113,8 +113,8 @@ const createAspenOrder = async (req: NewBody, res: NextApiResponse) => {
     };
 
     const priceMap = {
-      "TheraStom 12 pk": 63,
-      "OxiStom 6 pk": 25.5,
+      "TheraStom 12 pk": 69,
+      "OxiStom 6 pk": 27.9,
       "SalivaMax 10 pk": 110,
       OralID: 995,
       "Laminated Progression Sheets (4) (FS-760)": 10,
