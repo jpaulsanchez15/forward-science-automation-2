@@ -15,6 +15,10 @@ const cardInfo = [
     description: "Automate Aspen Orders",
   },
   {
+    title: "Sage",
+    description: "Automate Sage Orders",
+  },
+  {
     title: "FAQ",
     description: "Frequently Asked Questions",
   },
@@ -64,6 +68,21 @@ const Home = () => {
             Changelog
           </h2>
           <ul className="mt-4 space-y-2">
+            <li>
+              <span className="font-semibold">v1.4.0</span> - Hi FS Team =). I
+              hope you are doing well. I have two updates pushed out. The first
+              is addressing the issue regarding the label redirect on order
+              fulfillment. Ordoro actually changed how they create their own
+              labels on their end, hence changing how they are accessed on our
+              end. To circumvent this, I just changed it to redirect you to the
+              unique order page per order on Ordoro. This will be a little bit
+              slower but the alternative is downloading each label per order and
+              having to make a separate request for each one. The second is I
+              added a flag on office selection for Sage orders. This is similar
+              to the RMA Hold flag, but for when an office has an initial Sage
+              Order. In progress are the adding PerioStom to Aspen Order
+              creation and some price updates. - John Sanchez
+            </li>
             <li>
               <span className="font-semibold">v1.3.0</span> - Sage Orders are
               now supported. You can now create a shipping label for Sage

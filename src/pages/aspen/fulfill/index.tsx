@@ -45,9 +45,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
               <Link
                 target="_blank"
                 className="visited:text-gray-400 visited:hover:text-gray-600"
-                href={`https://abode.ordoro.com/label?$order=${
-                  props.ordoroLink?.slice(7) ?? ""
-                }&docs=shippinglabel&docs=packing&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true&showPrice=true&showBarcode=true`}
+                href={`https://app.ordoro.com/#${props.ordoroLink}`}
               >
                 Ordoro Link
               </Link>

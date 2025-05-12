@@ -372,13 +372,13 @@ const CreateSageForm = () => {
                   <ul>
                     <li>
                       {suggestion.tag.map((tag) => {
-                        if (tag.name === "PerioStom") {
+                        if (tag.name === "PerioStom_initial") {
                           return (
                             <span
                               key={tag.id}
-                              className="ml-2 text-2xl font-bold text-blue-500"
+                              className="ml-2 text-xl font-bold text-blue-500"
                             >
-                              **{tag.name}**
+                              *PerioStom Initial*
                             </span>
                           );
                         } else {

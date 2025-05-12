@@ -45,9 +45,7 @@ const Cards = ({ ...props }: AspenFulfillCardProps) => {
               <Link
                 target="_blank"
                 className="visited:text-gray-400 visited:hover:text-gray-600"
-                href={`https://abode.ordoro.com/label?$order=${
-                  props.ordoroLink?.slice(7) ?? ""
-                }&docs=shippinglabel&docs=packing&layout=thermal&utcOffset=-360&template=51196&showLogoOnLabel=true&showPrice=true&showBarcode=true&showCustomerNotes=true&show_packing_list_details=true`}
+                href={`https://app.ordoro.com/#${props.ordoroLink}`}
               >
                 Ordoro Link
               </Link>
@@ -100,6 +98,8 @@ const FulfillPage: NextPage = () => {
   const { data, isLoading, refetch } = api.sageOrder.getOrders.useQuery();
   const [disabled, isDisabled] = useState(false);
   const [showMyOrders, setShowMyOrders] = useState(true);
+
+  console.log(data);
 
   const { data: session } = useSession();
 
@@ -377,6 +377,23 @@ const Orders = ({
       fileAway: true,
     });
   };
+
+  // TODO: https://docs.ordoro.com/#tag/Label/operation/OrderByOrderNumberLabelDHL_Ecommerce_POST
+  // They changed how it works i think.
+  // const getLabelLink = async () => {
+  //   const label = await fetch(
+  //     `/api/ordoro/sage/getSageLabel?o=${order.orderNumber}`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   const data = await label.json();
+
+  //   return data;
+  // };
 
   return (
     <Cards
